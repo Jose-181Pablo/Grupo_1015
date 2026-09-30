@@ -21,13 +21,16 @@ public class ChatService {
 
     private final ConversacionRepository conversacionRepository;
     private final MensajeRepository mensajeRepository;
+    private final GeminiService geminiService;
 
     public ChatService(
             ConversacionRepository conversacionRepository,
-            MensajeRepository mensajeRepository
+            MensajeRepository mensajeRepository,
+            GeminiService geminiService
     ) {
         this.conversacionRepository = conversacionRepository;
         this.mensajeRepository = mensajeRepository;
+        this.geminiService = geminiService;
     }
 
     @Transactional
@@ -77,10 +80,17 @@ public class ChatService {
         Mensaje usuarioGuardado =
                 mensajeRepository.save(mensajeUsuario);
 
-        String contenidoRespuesta = generarRespuestaSimulada(
-                conversacion,
-                request.pregunta()
-        );
+        List<Mensaje> historial =
+                mensajeRepository
+                        .findByConversacion_IdOrderByFechaCreacionAsc(
+                                conversacionId
+                        );
+
+        String contenidoRespuesta =
+                geminiService.generarRespuesta(
+                        conversacion,
+                        historial
+                );
 
         Mensaje mensajeAsistente = new Mensaje(
                 Remitente.ASISTENTE,
@@ -141,16 +151,7 @@ public class ChatService {
                 );
     }
 
-    private String generarRespuestaSimulada(
-            Conversacion conversacion,
-            String pregunta
-    ) {
-        return "Respuesta simulada para la propiedad "
-                + conversacion.getPropiedadId()
-                + ": recibí tu pregunta \""
-                + pregunta.trim()
-                + "\". Posteriormente esta respuesta será generada por Gemini.";
-    }
+
 
     private ConversacionResponse convertirConversacion(
             Conversacion conversacion,

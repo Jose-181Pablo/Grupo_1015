@@ -59,6 +59,22 @@ public class GlobalExceptionHandler {
                 .body(respuesta);
     }
 
+    @ExceptionHandler(IaServiceException.class)
+    public ResponseEntity<Map<String, Object>> manejarErrorIa(
+            IaServiceException exception,
+            HttpServletRequest request
+    ) {
+        Map<String, Object> respuesta = crearRespuestaBase(
+                HttpStatus.BAD_GATEWAY,
+                exception.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_GATEWAY)
+                .body(respuesta);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> manejarErrorGeneral(
             Exception exception,

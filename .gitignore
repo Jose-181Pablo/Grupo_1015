@@ -1,3 +1,92 @@
-# Local Netlify folder
-.netlify
+# ==============================
+# DATOS SENSIBLES
+# ==============================
+
+# Variables de entorno
+.env
+.env.*
+!.env.example
+
+# Configuraciones locales con credenciales
+application-local.yml
+application-local.yaml
+application-local.properties
+
+# Claves / certificados
+*.key
+*.pem
+*.p12
+*.pfx
+
+
+# ==============================
+# SPRING BOOT / MAVEN
+# ==============================
+
+target/
+.mvn/wrapper/maven-wrapper.jar
+
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+
+# ==============================
+# INTELLIJ IDEA
+# ==============================
+
+.idea/
+*.iws
+*.iml
+*.ipr
+
+
+# ==============================
+# NETBEANS
+# ==============================
+
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+
+# ==============================
+# VS CODE
+# ==============================
+
+.vscode/
+
+
+# ==============================
+# NETLIFY
+# ==============================
+
+.netlify/
+
+
+# ==============================
+# ARCHIVOS PESADOS / MULTIMEDIA
+# ==============================
+
 *.mp4
+
+
+# ==============================
+# LOGS
+# ==============================
+
+*.log
+logs/
+
+
+# ==============================
+# WINDOWS
+# ==============================
+
+Thumbs.db
+Desktop.ini
