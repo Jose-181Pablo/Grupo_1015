@@ -76,6 +76,10 @@ public class Conversacion {
         mensaje.setConversacion(null);
     }
 
+    public void marcarActualizada() {
+        ultimaActualizacion = LocalDateTime.now();
+    }
+
     public Long getId() {
         return id;
     }
@@ -115,4 +119,6 @@ public class Conversacion {
     public List<Mensaje> getMensajes() {
         return mensajes;
     }
+
+
 }
