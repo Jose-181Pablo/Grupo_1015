@@ -1,3 +1,32 @@
-# Local Netlify folder
+# ===== Netlify =====
 .netlify
+
+# ===== Videos pesados =====
 *.mp4
+*.mov
+
+# ===== IntelliJ =====
+.idea/
+*.iml
+out/
+
+# ===== Maven / compilados =====
+target/
+
+# ===== Información sensible =====
+.env
+*.env
+.env.*
+application-local.properties
+application-local.yml
+application-secret.properties
+*.postman_environment.json
+
+# ===== Logs =====
+*.log
+logs/
+
+# ===== Sistema operativo =====
+Thumbs.db
+Desktop.ini
+.DS_Store
