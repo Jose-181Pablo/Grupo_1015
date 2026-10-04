@@ -1,10 +1,23 @@
-# Default ignored files
-/shelf/
-/workspace.xml
-# Editor-based HTTP Client requests
-/httpRequests/
-# Ignored default folder with query files
-/queries/
-# Datasource local storage ignored files
-/dataSources/
-/dataSources.local.xml
+# --- Maven (Archivos compilados y librerías generadas) ---
+target/
+*.jar
+*.war
+*.ear
+*.rar
+
+# --- IntelliJ IDEA (Configuración local del editor) ---
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# --- Gradle / Wrapper (Si existen en tu estructura) ---
+.gradle/
+build/
+
+# --- Sistema operativo y temporales ---
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
