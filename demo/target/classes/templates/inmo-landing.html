@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<!-- El atributo xmlns:th es fundamental: le dice al HTML que usaremos Thymeleaf para leer variables de Java -->
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo Inmobiliario - Grupo 10.15</title>
+    <!-- Spring Boot buscará este archivo automáticamente en la carpeta /static/ -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<header style="text-align: center; padding: 20px; background-color: #1a1a1a; color: white;">
+    <h1>Proyectos Destacados</h1>
+</header>
+
+<main>
+    <!-- Contenedor principal de tu catálogo -->
+    <section class="projects-catalog" id="projects-catalog" style="display: flex; gap: 20px; padding: 20px; justify-content: center; flex-wrap: wrap;">
+
+        <!-- Aquí ocurre la magia: th:each repite este bloque <div> por cada 'casa' en la lista del Controller -->
+        <div th:each="casa : ${casas}" class="project-card" style="border: 1px solid #ccc; padding: 15px; border-radius: 8px; width: 300px;">
+
+            <!-- Inyectamos la información dinámica usando th:text para textos -->
+            <h2 th:text="${casa.titulo}">Nombre de la Propiedad</h2>
+            <p><strong>Ubicación:</strong> <span th:text="${casa.ubicacion}">Ubicación aquí</span></p>
+            <p><strong>Precio:</strong> <span th:text="${casa.precio}">$0.00</span></p>
+
+            <!-- En un proyecto real, aquí construiríamos la ruta de la imagen dinámica -->
+            <!-- <img th:src="@{'/assets/images/' + ${casa.id} + '/' + ${casa.imagen}}" alt="Fachada"> -->
+
+        </div>
+
+    </section>
+</main>
+
+</body>
+</html>
