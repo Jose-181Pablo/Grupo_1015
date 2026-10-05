@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inmobiliaria | Grupo 10.15</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="microservicios.css">
     <style>
         /* ===== INMOBILIARIA LANDING PAGE ===== */
         /* Ya no se necesita .inmo-landing porque usamos .page-header */
@@ -674,6 +675,20 @@
                     </div>
                 </div>
             </div>
+
+            <!-- ===== OFERTAS Y REMATES (Microservicio de Ofertas) ===== -->
+            <section class="ofertas-section" id="ofertas-remates" style="display:none;">
+                <div class="ofertas-header">
+                    <span class="section-subtitle">Oportunidades</span>
+                    <h2>Ofertas y Remates</h2>
+                </div>
+                <div class="ofertas-filtros">
+                    <button type="button" class="ofertas-filtro activo" data-filtro="TODAS">Todas</button>
+                    <button type="button" class="ofertas-filtro" data-filtro="OFERTA">Ofertas</button>
+                    <button type="button" class="ofertas-filtro" data-filtro="REMATE">Remates</button>
+                </div>
+                <div class="ofertas-grid" id="ofertas-grid"></div>
+            </section>
         </div>
 
         <!-- ===== CASAS CATALOG ===== -->
@@ -2410,5 +2425,6 @@
         runBgCarousel('#casas-carousel');
         runBgCarousel('#terrenos-carousel');
     </script>
+    <script src="microservicios.js"></script>
 </body>
 </html>
