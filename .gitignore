@@ -13,10 +13,11 @@ out/
 # ===== Maven / compilados =====
 target/
 
-# ===== Información sensible =====
+# ===== Informacion sensible =====
 .env
 *.env
 .env.*
+!.env.example
 application-local.properties
 application-local.yml
 application-secret.properties
