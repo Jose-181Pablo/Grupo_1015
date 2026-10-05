@@ -1,0 +1,565 @@
+{
+  "info": {
+    "name": "Grupo 10.15 - Microservicios",
+    "description": "Pruebas de los microservicios de Citas (8081) y Ofertas y Remates (8082). Ejecútala completa con Run collection: cada servicio crea sus datos de prueba y los borra al final.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "citas_url",
+      "value": "http://localhost:8081"
+    },
+    {
+      "key": "ofertas_url",
+      "value": "http://localhost:8082"
+    },
+    {
+      "key": "citaId",
+      "value": ""
+    },
+    {
+      "key": "ofertaId",
+      "value": ""
+    },
+    {
+      "key": "remateId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Microservicio Citas (8081)",
+      "item": [
+        {
+          "name": "1. Listar todas las citas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{citas_url}}/api/citas"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200 OK\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Devuelve una lista\", () => pm.expect(pm.response.json()).to.be.an(\"array\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2. Crear cita",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{citas_url}}/api/citas",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Ana López\",\n  \"email\": \"ana@mail.com\",\n  \"telefono\": \"3312345678\",\n  \"propiedad\": \"chapala\",\n  \"fechaHora\": \"2026-11-10T11:00:00\",\n  \"mensaje\": \"Quiero ver la casa\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 201 Created\", () => pm.response.to.have.status(201));",
+                  "const c = pm.response.json();",
+                  "pm.collectionVariables.set(\"citaId\", c.id);",
+                  "pm.test(\"Toda cita nueva empieza PENDIENTE\", () => pm.expect(c.estado).to.eql(\"PENDIENTE\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "3. Obtener la cita creada",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{citas_url}}/api/citas/{{citaId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200 OK\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Es la misma cita\", () => pm.expect(pm.response.json().id).to.eql(Number(pm.collectionVariables.get(\"citaId\"))));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "4. Confirmar la cita",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": "{{citas_url}}/api/citas/{{citaId}}/estado?estado=CONFIRMADA"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200 OK\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Estado cambió a CONFIRMADA\", () => pm.expect(pm.response.json().estado).to.eql(\"CONFIRMADA\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "5. Listar solo confirmadas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{citas_url}}/api/citas?estado=CONFIRMADA"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200 OK\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Todas están CONFIRMADA\", () => pm.response.json().forEach(c => pm.expect(c.estado).to.eql(\"CONFIRMADA\")));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "6. ERROR esperado: cita que no existe",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{citas_url}}/api/citas/999999"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 404 Not Found\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"Trae mensaje de error\", () => pm.expect(pm.response.json()).to.have.property(\"error\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "7. ERROR esperado: faltan nombre y email",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{citas_url}}/api/citas",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"telefono\": \"3312345678\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 400 Bad Request\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Indica los campos que faltan\", () => { const e = pm.response.json(); pm.expect(e).to.have.property(\"nombre\"); pm.expect(e).to.have.property(\"email\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "8. Borrar la cita de prueba",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{citas_url}}/api/citas/{{citaId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 204 No Content\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "9. Health (requiere Actuator)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{citas_url}}/actuator/health"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200 OK\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Servicio UP\", () => pm.expect(pm.response.json().status).to.eql(\"UP\"));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Microservicio Ofertas y Remates (8082)",
+      "item": [
+        {
+          "name": "1. Listar ofertas y remates activos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{ofertas_url}}/api/ofertas"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200 OK\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Devuelve una lista\", () => pm.expect(pm.response.json()).to.be.an(\"array\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2. Crear oferta",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{ofertas_url}}/api/ofertas",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"propiedad\": \"hacienda-agave\",\n  \"titulo\": \"Casa Hacienda Agave con descuento\",\n  \"descripcion\": \"Precio especial por tiempo limitado\",\n  \"tipo\": \"OFERTA\",\n  \"precioOriginal\": 7800000,\n  \"precioFinal\": 7350000,\n  \"fechaInicio\": \"2026-10-05\",\n  \"fechaFin\": \"2026-12-31\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 201 Created\", () => pm.response.to.have.status(201));",
+                  "const o = pm.response.json();",
+                  "pm.collectionVariables.set(\"ofertaId\", o.id);",
+                  "pm.test(\"Queda activa\", () => pm.expect(o.activa).to.eql(true));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "3. Crear remate",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{ofertas_url}}/api/ofertas",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"propiedad\": \"chapala\",\n  \"titulo\": \"Remate residencia Chapala\",\n  \"tipo\": \"REMATE\",\n  \"precioOriginal\": 9500000,\n  \"precioFinal\": 6900000\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 201 Created\", () => pm.response.to.have.status(201));",
+                  "pm.collectionVariables.set(\"remateId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "4. Obtener la oferta creada",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{ofertas_url}}/api/ofertas/{{ofertaId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200 OK\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Es tipo OFERTA\", () => pm.expect(pm.response.json().tipo).to.eql(\"OFERTA\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "5. Listar solo remates",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{ofertas_url}}/api/ofertas?tipo=REMATE"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200 OK\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Todos son REMATE\", () => pm.response.json().forEach(o => pm.expect(o.tipo).to.eql(\"REMATE\")));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "6. Buscar por propiedad (chapala)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{ofertas_url}}/api/ofertas?propiedad=chapala"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200 OK\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Todos son de chapala\", () => pm.response.json().forEach(o => pm.expect(o.propiedad).to.eql(\"chapala\")));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "7. Actualizar precio de la oferta",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{ofertas_url}}/api/ofertas/{{ofertaId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"propiedad\": \"hacienda-agave\",\n  \"titulo\": \"Casa Hacienda Agave con descuento\",\n  \"descripcion\": \"Nuevo precio especial\",\n  \"tipo\": \"OFERTA\",\n  \"precioOriginal\": 7800000,\n  \"precioFinal\": 7200000,\n  \"fechaInicio\": \"2026-10-05\",\n  \"fechaFin\": \"2026-12-31\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200 OK\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Precio actualizado\", () => pm.expect(Number(pm.response.json().precioFinal)).to.eql(7200000));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "8. ERROR esperado: precio final mayor al original",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{ofertas_url}}/api/ofertas",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"propiedad\": \"chapala\",\n  \"titulo\": \"Prueba precio inválido\",\n  \"tipo\": \"OFERTA\",\n  \"precioOriginal\": 5000000,\n  \"precioFinal\": 9000000\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 400 Bad Request\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Explica la regla\", () => pm.expect(pm.response.json().error).to.include(\"precio final\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "9. ERROR esperado: oferta que no existe",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{ofertas_url}}/api/ofertas/999999"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 404 Not Found\", () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "10. Desactivar el remate",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": "{{ofertas_url}}/api/ofertas/{{remateId}}/desactivar"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200 OK\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Queda inactivo\", () => pm.expect(pm.response.json().activa).to.eql(false));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "11. Borrar la oferta de prueba",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{ofertas_url}}/api/ofertas/{{ofertaId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 204 No Content\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "12. Borrar el remate de prueba",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{ofertas_url}}/api/ofertas/{{remateId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 204 No Content\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "13. Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{ofertas_url}}/actuator/health"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200 OK\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Servicio y base de datos UP\", () => { const h = pm.response.json(); pm.expect(h.status).to.eql(\"UP\"); pm.expect(h.components.db.status).to.eql(\"UP\"); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
