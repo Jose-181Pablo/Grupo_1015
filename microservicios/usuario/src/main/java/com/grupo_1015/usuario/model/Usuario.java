@@ -1,8 +1,19 @@
 package com.grupo_1015.usuario.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
 // Modelo: representa los datos de un usuario.
+// @Entity indica que se guarda en la tabla "usuarios" de la base de datos.
+@Entity
+@Table(name = "usuarios")
 public class Usuario {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // la BD genera el id
     private Long id;
     private String nombre;
     private String apellido;

@@ -1,0 +1,19 @@
+# Base de datos del microservicio usuario (MariaDB en Docker).
+# Levantar:  docker compose up -d
+# Apagar:    docker compose down
+services:
+  usuario-db:
+    image: mariadb:11.4
+    container_name: usuario-db
+    environment:
+      MARIADB_ROOT_PASSWORD: root123
+      MARIADB_DATABASE: usuario_db
+      MARIADB_USER: usuario
+      MARIADB_PASSWORD: usuario123
+    ports:
+      - "3308:3306"   # 3308 en tu PC -> 3306 dentro del contenedor
+    volumes:
+      - usuario-db-data:/var/lib/mysql   # los datos no se pierden al apagar
+
+volumes:
+  usuario-db-data:
