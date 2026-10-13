@@ -1,0 +1,99 @@
+{
+  "info": {
+    "name": "Inmobiliaria Service - Grupo 10.15",
+    "description": "Pruebas del microservicio de propiedades. Córrelas en orden: el paso 6 guarda el id que usan los pasos 7 a 9.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8082" },
+    { "key": "id", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "0. Salud del servicio",
+      "request": { "method": "GET", "url": "{{baseUrl}}/actuator/health" }
+    },
+    {
+      "name": "1. Listar todas las propiedades",
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('Status 200', () => pm.response.to.have.status(200));",
+        "pm.test('Regresa una lista', () => pm.expect(pm.response.json()).to.be.an('array'));"
+      ] } }],
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/propiedades" }
+    },
+    {
+      "name": "2. Solo casas",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/propiedades?categoria=CASA" }
+    },
+    {
+      "name": "3. Solo terrenos",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/propiedades?categoria=TERRENO" }
+    },
+    {
+      "name": "4. Buscar por ubicación (Tlajomulco)",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/propiedades?ubicacion=tlajomulco" }
+    },
+    {
+      "name": "5. Buscar por clave (capri)",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/propiedades/clave/capri" }
+    },
+    {
+      "name": "6. Crear propiedad",
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('Status 201', () => pm.response.to.have.status(201));",
+        "pm.collectionVariables.set('id', pm.response.json().id);"
+      ] } }],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/propiedades",
+        "body": { "mode": "raw", "raw": "{\n  \"clave\": \"casa_postman\",\n  \"nombre\": \"Casa de Prueba Postman\",\n  \"categoria\": \"CASA\",\n  \"ubicacion\": \"Zapopan, Jalisco\",\n  \"descripcion\": \"Propiedad creada desde Postman\",\n  \"precio\": 3500000,\n  \"terrenoM2\": 160,\n  \"construccionM2\": 200,\n  \"distribucion\": \"3 rec + 2 baños\",\n  \"amenidades\": \"Alberca + Seguridad 24/7\"\n}" }
+      }
+    },
+    {
+      "name": "7. Ver la propiedad creada",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/propiedades/{{id}}" }
+    },
+    {
+      "name": "8. Actualizar propiedad (apartada y nuevo precio)",
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('Status 200', () => pm.response.to.have.status(200));",
+        "pm.test('Quedó APARTADA', () => pm.expect(pm.response.json().estatus).to.eql('APARTADA'));"
+      ] } }],
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/propiedades/{{id}}",
+        "body": { "mode": "raw", "raw": "{\n  \"clave\": \"casa_postman\",\n  \"nombre\": \"Casa de Prueba Postman\",\n  \"categoria\": \"CASA\",\n  \"ubicacion\": \"Zapopan, Jalisco\",\n  \"precio\": 3400000,\n  \"terrenoM2\": 160,\n  \"construccionM2\": 200,\n  \"distribucion\": \"3 rec + 2 baños\",\n  \"estatus\": \"APARTADA\"\n}" }
+      }
+    },
+    {
+      "name": "9. Eliminar propiedad",
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('Status 204', () => pm.response.to.have.status(204));"
+      ] } }],
+      "request": { "method": "DELETE", "url": "{{baseUrl}}/api/propiedades/{{id}}" }
+    },
+    {
+      "name": "10. Error: datos inválidos (400)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/propiedades",
+        "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"\",\n  \"categoria\": \"CASA\",\n  \"precio\": -5\n}" }
+      }
+    },
+    {
+      "name": "11. Error: no existe (404)",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/propiedades/99999" }
+    },
+    {
+      "name": "12. Eureka: servicios registrados",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Accept", "value": "application/json" }],
+        "url": "http://localhost:8761/eureka/apps"
+      }
+    }
+  ]
+}
