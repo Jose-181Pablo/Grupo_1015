@@ -1,6 +1,7 @@
-# Base de datos del microservicio usuario (MariaDB en Docker).
-# Levantar:  docker compose up -d
-# Apagar:    docker compose down
+# Microservicio usuario + su base de datos (MariaDB) en Docker.
+# Levantar todo:      docker compose up -d --build
+# Solo la BD:         docker compose up -d usuario-db
+# Apagar:             docker compose down
 services:
   usuario-db:
     image: mariadb:11.4
@@ -14,6 +15,23 @@ services:
       - "3308:3306"   # 3308 en tu PC -> 3306 dentro del contenedor
     volumes:
       - usuario-db-data:/var/lib/mysql   # los datos no se pierden al apagar
+    healthcheck:   # indica cuando MariaDB ya acepta conexiones
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  usuario:
+    build: .
+    container_name: usuario
+    ports:
+      - "8081:8081"
+    environment:
+      # Dentro de Docker la BD se llama "usuario-db" y usa el puerto 3306
+      SPRING_DATASOURCE_URL: jdbc:mariadb://usuario-db:3306/usuario_db
+    depends_on:
+      usuario-db:
+        condition: service_healthy   # espera a que MariaDB este lista
 
 volumes:
   usuario-db-data:
