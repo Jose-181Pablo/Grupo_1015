@@ -3,7 +3,7 @@ package com.grupo_1015.autenticacion.service;
 import com.grupo_1015.autenticacion.client.UsuarioClient;
 import com.grupo_1015.autenticacion.dto.LoginRequest;
 import com.grupo_1015.autenticacion.dto.RegistroRequest;
-import com.grupo_1015.autenticacion.dto.RegistroResponse;
+import com.grupo_1015.autenticacion.dto.CuentaResponse;
 import com.grupo_1015.autenticacion.dto.TokenResponse;
 import com.grupo_1015.autenticacion.dto.ValidacionResponse;
 import com.grupo_1015.autenticacion.model.Credencial;
@@ -32,7 +32,7 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
-    public RegistroResponse registrar(RegistroRequest datos) {
+    public CuentaResponse registrar(RegistroRequest datos) {
         if (estaVacio(datos.correo()) || estaVacio(datos.password())) {
             throw new IllegalArgumentException("El correo y la contrasena son obligatorios");
         }
@@ -56,8 +56,7 @@ public class AuthService {
         Credencial credencial = new Credencial(correo, passwordEncoder.encode(datos.password()), usuarioId);
         Credencial guardada = credencialRepository.save(credencial);
 
-        return new RegistroResponse(guardada.getId(), guardada.getCorreo(), guardada.getUsuarioId(),
-                guardada.getRol(), guardada.getPlan());
+        return CuentaResponse.de(guardada);
     }
 
     public TokenResponse login(LoginRequest datos) {
