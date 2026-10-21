@@ -1,0 +1,25 @@
+# Base de datos del microservicio autenticacion (MariaDB en Docker).
+# Las contrasenas se leen del archivo .env (ver .env.example).
+# Levantar:  docker compose up -d
+# Apagar:    docker compose down
+services:
+  autenticacion-db:
+    image: mariadb:11.4
+    container_name: autenticacion-db
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${DB_NAME}
+      MARIADB_USER: ${DB_USER}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "127.0.0.1:3309:3306"   # solo accesible desde tu PC (3309 -> 3306 del contenedor)
+    volumes:
+      - autenticacion-db-data:/var/lib/mysql   # los datos no se pierden al apagar
+    healthcheck:   # indica cuando MariaDB ya acepta conexiones
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  autenticacion-db-data:
