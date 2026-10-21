@@ -2,6 +2,8 @@ package com.grupo_1015.autenticacion.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -26,6 +28,14 @@ public class Credencial {
 
     @Column(nullable = false)
     private Long usuarioId;
+
+    @Enumerated(EnumType.STRING) // se guarda como texto: "ADMIN" o "USUARIO"
+    @Column(nullable = false)
+    private Rol rol = Rol.USUARIO;
+
+    @Enumerated(EnumType.STRING) // se guarda como texto: "ESTANDAR" o "PREMIUM"
+    @Column(nullable = false)
+    private Plan plan = Plan.ESTANDAR;
 
     public Credencial() {
     }
@@ -66,5 +76,21 @@ public class Credencial {
 
     public void setUsuarioId(Long usuarioId) {
         this.usuarioId = usuarioId;
+    }
+
+    public Rol getRol() {
+        return rol;
+    }
+
+    public void setRol(Rol rol) {
+        this.rol = rol;
+    }
+
+    public Plan getPlan() {
+        return plan;
+    }
+
+    public void setPlan(Plan plan) {
+        this.plan = plan;
     }
 }
