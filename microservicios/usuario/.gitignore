@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Variables con contrasenas (no subir) ###
+.env
+
