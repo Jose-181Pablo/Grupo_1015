@@ -4,6 +4,7 @@ import com.grupo_1015.autenticacion.dto.RegistroRequest;
 import com.grupo_1015.autenticacion.dto.RegistroResponse;
 import com.grupo_1015.autenticacion.service.AuthService;
 import com.grupo_1015.autenticacion.service.CorreoYaRegistradoException;
+import com.grupo_1015.autenticacion.service.ServicioUsuarioNoDisponibleException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -36,6 +37,12 @@ public class AuthController {
     @ExceptionHandler(CorreoYaRegistradoException.class)
     public ResponseEntity<Map<String, String>> correoRepetido(CorreoYaRegistradoException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", e.getMessage()));
+    }
+
+    // El microservicio usuario no responde -> 503 Service Unavailable
+    @ExceptionHandler(ServicioUsuarioNoDisponibleException.class)
+    public ResponseEntity<Map<String, String>> usuarioNoDisponible(ServicioUsuarioNoDisponibleException e) {
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(Map.of("error", e.getMessage()));
     }
 
     // Faltan datos -> 400 Bad Request
