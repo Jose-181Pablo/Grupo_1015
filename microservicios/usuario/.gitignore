@@ -35,3 +35,46 @@ build/
 ### Variables con contrasenas (no subir) ###
 .env
 
+### ============================================================
+### INFORMACION SENSIBLE: nunca se sube a GitHub
+### ============================================================
+
+# Variables con contrasenas, claves de JWT y datos del ADMIN
+.env
+.env.*
+!.env.example
+
+# Llaves, certificados privados y almacenes de claves
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.truststore
+
+# Carpetas o archivos de secretos que alguien cree a mano
+secrets/
+secretos/
+*.secret
+
+# Configuracion local de Spring con datos reales (ej. application-local.properties)
+application-local.*
+application-*.local.*
+
+# Entornos y exportaciones de Postman (pueden guardar tokens y contrasenas)
+*.postman_environment.json
+postman/*globals*.json
+
+# Registros (logs): pueden contener correos, tokens o errores con datos
+*.log
+logs/
+
+# Respaldos de base de datos
+*.sql.gz
+*.dump
+backup/
+respaldos/
+
+# Configuracion local de Docker que no debe compartirse
+docker-compose.override.yml
