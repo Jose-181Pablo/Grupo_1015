@@ -13,34 +13,39 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "mensajes")
+@Getter
+@NoArgsConstructor
 public class Mensaje {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "conversacion_id", nullable = false)
     private Conversacion conversacion;
 
+    @Setter
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private Remitente remitente;
 
+    @Setter
     @Lob
     @Column(nullable = false, columnDefinition = "TEXT")
     private String contenido;
 
     @Column(name = "fecha_creacion", nullable = false)
     private LocalDateTime fechaCreacion;
-
-    public Mensaje() {
-    }
 
     public Mensaje(Remitente remitente, String contenido) {
         this.remitente = remitente;
@@ -50,37 +55,5 @@ public class Mensaje {
     @PrePersist
     public void antesDeGuardar() {
         fechaCreacion = LocalDateTime.now();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Conversacion getConversacion() {
-        return conversacion;
-    }
-
-    public void setConversacion(Conversacion conversacion) {
-        this.conversacion = conversacion;
-    }
-
-    public Remitente getRemitente() {
-        return remitente;
-    }
-
-    public void setRemitente(Remitente remitente) {
-        this.remitente = remitente;
-    }
-
-    public String getContenido() {
-        return contenido;
-    }
-
-    public void setContenido(String contenido) {
-        this.contenido = contenido;
-    }
-
-    public LocalDateTime getFechaCreacion() {
-        return fechaCreacion;
     }
 }

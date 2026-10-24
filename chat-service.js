@@ -1,7 +1,7 @@
 (() => {
     "use strict";
 
-    const API_BASE_URL = "http://localhost:8084/api/v1";
+    const API_BASE_URL = "http://localhost:8085/api/v1";
     const STORAGE_CONVERSACIONES = "grupo1015_chat_conversaciones";
     const STORAGE_USUARIO = "grupo1015_usuario_chat";
 
@@ -223,7 +223,7 @@
                 mensajeEspera.textContent =
                     "No fue posible conectar con el microservicio. " +
                     "Comprueba que Docker esté activo y que el servicio " +
-                    "se encuentre disponible en el puerto 8084.";
+                    "se encuentre disponible en el puerto 8085.";
             } else {
                 mensajeEspera.textContent =
                     error.message ||

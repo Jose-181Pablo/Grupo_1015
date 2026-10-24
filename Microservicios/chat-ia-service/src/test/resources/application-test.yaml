@@ -1,0 +1,18 @@
+# Perfil "test": configuración usada solo por las pruebas: base de datos H2 en memoria,
+# así no se necesita MariaDB ni la clave de Gemini para ejecutarlas.
+spring:
+  datasource:
+    url: jdbc:h2:mem:chat_ia_test;MODE=MariaDB;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+
+gemini:
+  model: modelo-de-prueba
+
+catalogo:
+  url: http://localhost:1

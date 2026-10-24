@@ -3,7 +3,7 @@ spring:
     name: chat-ia-service
 
   datasource:
-    url: ${DB_URL:jdbc:mariadb://localhost:3306/chat_ia_db}
+    url: ${DB_URL:jdbc:mariadb://localhost:3310/chat_ia_db}
     username: ${DB_USERNAME:root}
     password: ${DB_PASSWORD:}
 
@@ -14,7 +14,7 @@ spring:
     open-in-view: false
 
 server:
-  port: 8084
+  port: ${PORT:8085}
 
 management:
   endpoints:
@@ -25,3 +25,7 @@ management:
 
 gemini:
   model: ${GEMINI_MODEL:gemini-flash-latest}
+
+# Microservicio de catálogo (inmobiliaria-service de la rama pablo).
+catalogo:
+  url: ${CATALOGO_URL:http://localhost:8082}

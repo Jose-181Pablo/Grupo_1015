@@ -11,7 +11,7 @@ services:
       MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
 
     ports:
-      - "3307:3306"
+      - "3310:3306"
 
     volumes:
       - chat_ia_data:/var/lib/mysql
@@ -33,13 +33,18 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       GOOGLE_API_KEY: ${GOOGLE_API_KEY}
       GEMINI_MODEL: ${GEMINI_MODEL:-gemini-flash-latest}
+      CATALOGO_URL: ${CATALOGO_URL:-http://host.docker.internal:8082}
+
+    # Permite llegar al catálogo que corre en tu equipo (o en otro compose)
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
     ports:
-      - "8084:8084"
+      - "8085:8085"
 
     depends_on:
       chat-db:
         condition: service_healthy
 
 volumes:
-  chat_ia_data:
+  chat_ia_data:

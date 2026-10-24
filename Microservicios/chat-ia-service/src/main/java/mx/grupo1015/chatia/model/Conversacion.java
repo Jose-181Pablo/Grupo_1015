@@ -10,6 +10,9 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -17,18 +20,23 @@ import java.util.List;
 
 @Entity
 @Table(name = "conversaciones")
+@Getter
+@NoArgsConstructor
 public class Conversacion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Setter
     @Column(name = "usuario_id", length = 100)
     private String usuarioId;
 
+    @Setter
     @Column(name = "propiedad_id", nullable = false, length = 100)
     private String propiedadId;
 
+    @Setter
     @Column(nullable = false, length = 150)
     private String titulo;
 
@@ -44,9 +52,6 @@ public class Conversacion {
             orphanRemoval = true
     )
     private List<Mensaje> mensajes = new ArrayList<>();
-
-    public Conversacion() {
-    }
 
     public Conversacion(String usuarioId, String propiedadId, String titulo) {
         this.usuarioId = usuarioId;
@@ -79,46 +84,4 @@ public class Conversacion {
     public void marcarActualizada() {
         ultimaActualizacion = LocalDateTime.now();
     }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getUsuarioId() {
-        return usuarioId;
-    }
-
-    public void setUsuarioId(String usuarioId) {
-        this.usuarioId = usuarioId;
-    }
-
-    public String getPropiedadId() {
-        return propiedadId;
-    }
-
-    public void setPropiedadId(String propiedadId) {
-        this.propiedadId = propiedadId;
-    }
-
-    public String getTitulo() {
-        return titulo;
-    }
-
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
-    }
-
-    public LocalDateTime getFechaCreacion() {
-        return fechaCreacion;
-    }
-
-    public LocalDateTime getUltimaActualizacion() {
-        return ultimaActualizacion;
-    }
-
-    public List<Mensaje> getMensajes() {
-        return mensajes;
-    }
-
-
 }

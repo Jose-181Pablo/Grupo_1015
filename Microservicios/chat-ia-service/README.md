@@ -8,6 +8,7 @@ Microservicio desarrollado con Spring Boot que permite crear conversaciones rela
 - Spring Boot 4
 - Maven
 - Spring Data JPA
+- Lombok
 - MariaDB
 - Gemini API
 - Docker
@@ -41,7 +42,11 @@ src/main/java/mx/grupo1015/chatia
 
 ## Variables de entorno
 
-Antes de ejecutar el proyecto, se debe crear un archivo `.env` tomando como referencia `.env.example`.
+Antes de ejecutar el proyecto, copia `.env.example` como `.env` y llena los valores:
+
+```bash
+cp .env.example .env
+```
 
 ```env
 DB_PASSWORD=contraseña_de_la_base
@@ -71,7 +76,7 @@ docker compose ps
 Comprobar el estado del microservicio:
 
 ```text
-http://localhost:8084/actuator/health
+http://localhost:8085/actuator/health
 ```
 
 Detener los contenedores:
@@ -92,8 +97,10 @@ docker compose down -v
 
 | Servicio | Puerto |
 |---|---:|
-| Chat con IA | 8084 |
-| MariaDB de Docker | 3307 |
+| Chat con IA | 8085 |
+| MariaDB de Docker | 3310 |
+
+El puerto de la aplicación se puede cambiar con la variable `PORT`. La tabla con los puertos de todos los microservicios del equipo está en [`../PUERTOS.md`](../PUERTOS.md).
 
 ## Endpoints principales
 
@@ -139,6 +146,34 @@ GET /api/v1/conversaciones/{conversacionId}
 DELETE /api/v1/conversaciones/{conversacionId}
 ```
 
+## Integración con el catálogo
+
+Antes de llamar a Gemini, el chat consulta el microservicio de catálogo (`inmobiliaria-service`, rama `pablo`) con:
+
+```http
+GET {CATALOGO_URL}/api/propiedades/clave/{propiedadId}
+```
+
+El `propiedadId` de la conversación es la misma clave que usa el catálogo (`lago_nogal`, `casa65`, `chapala`, etc.). Con esos datos (precio, ubicación, m², distribución, amenidades y estatus) el asistente responde sin inventar información.
+
+- Desde IntelliJ se usa `http://localhost:8082`.
+- Desde Docker se usa `http://host.docker.internal:8082`, que apunta al catálogo levantado en tu equipo.
+- Se cambia con la variable `CATALOGO_URL`.
+
+Si el catálogo está apagado o no tiene la propiedad, el chat sigue funcionando y el asistente indica que un asesor puede dar la información.
+
+## Pruebas
+
+Las pruebas usan una base H2 en memoria (perfil `test`) y simulan Gemini, así que no necesitan Docker ni la clave de la API:
+
+```bash
+./mvnw test
+```
+
+## Postman
+
+La colección `postman/chat-ia-service.postman_collection.json` trae todas las peticiones. Impórtala en Postman y ejecútalas en orden: "Crear conversación" guarda el id en la variable `conversacionId` que usan las demás.
+
 ## Base de datos
 
 Docker crea una base MariaDB llamada:
@@ -163,8 +198,7 @@ Los datos se conservan en un volumen de Docker aunque los contenedores sean dete
 
 ## Mejoras futuras
 
-- Integración con el microservicio de catálogo.
 - Recepción y validación de JWT.
 - Registro en Eureka.
 - Comunicación por medio de Kafka si el proyecto lo requiere.
-- Integración con la interfaz web.
+- Integración con la interfaz web.

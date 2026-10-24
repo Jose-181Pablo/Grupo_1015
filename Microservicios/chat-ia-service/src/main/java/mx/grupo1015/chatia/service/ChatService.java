@@ -1,10 +1,12 @@
 package mx.grupo1015.chatia.service;
 
+import mx.grupo1015.chatia.client.CatalogoClient;
 import mx.grupo1015.chatia.dto.ChatResponse;
 import mx.grupo1015.chatia.dto.ConversacionResponse;
 import mx.grupo1015.chatia.dto.CrearConversacionRequest;
 import mx.grupo1015.chatia.dto.EnviarMensajeRequest;
 import mx.grupo1015.chatia.dto.MensajeResponse;
+import mx.grupo1015.chatia.dto.PropiedadCatalogo;
 import mx.grupo1015.chatia.exception.RecursoNoEncontradoException;
 import mx.grupo1015.chatia.model.Conversacion;
 import mx.grupo1015.chatia.model.Mensaje;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ChatService {
@@ -22,15 +25,18 @@ public class ChatService {
     private final ConversacionRepository conversacionRepository;
     private final MensajeRepository mensajeRepository;
     private final GeminiService geminiService;
+    private final CatalogoClient catalogoClient;
 
     public ChatService(
             ConversacionRepository conversacionRepository,
             MensajeRepository mensajeRepository,
-            GeminiService geminiService
+            GeminiService geminiService,
+            CatalogoClient catalogoClient
     ) {
         this.conversacionRepository = conversacionRepository;
         this.mensajeRepository = mensajeRepository;
         this.geminiService = geminiService;
+        this.catalogoClient = catalogoClient;
     }
 
     @Transactional
@@ -86,9 +92,15 @@ public class ChatService {
                                 conversacionId
                         );
 
+        Optional<PropiedadCatalogo> propiedad =
+                catalogoClient.buscarPorClave(
+                        conversacion.getPropiedadId()
+                );
+
         String contenidoRespuesta =
                 geminiService.generarRespuesta(
                         conversacion,
+                        propiedad,
                         historial
                 );
 
@@ -188,4 +200,4 @@ public class ChatService {
 
         return texto.trim();
     }
-}
+}
