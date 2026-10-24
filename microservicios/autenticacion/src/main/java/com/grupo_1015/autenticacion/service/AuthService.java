@@ -94,7 +94,7 @@ public class AuthService {
                 .orElseThrow(TokenInvalidoException::new); // la cuenta ya no existe
 
         boolean accesoPremium = credencial.getPlan() == Plan.PREMIUM || credencial.getRol() == Rol.ADMIN;
-        return new ValidacionResponse(credencial.getCorreo(), credencial.getUsuarioId(),
+        return new ValidacionResponse(credencial.getId(), credencial.getCorreo(), credencial.getUsuarioId(),
                 credencial.getRol(), credencial.getPlan(), accesoPremium);
     }
 

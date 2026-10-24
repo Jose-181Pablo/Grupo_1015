@@ -1,0 +1,194 @@
+{
+  "info": {
+    "name": "Microservicio autenticacion",
+    "description": "Registro, login (JWT), validacion de token y administracion.\n\nANTES DE EJECUTAR: en la pestaña Variables de la coleccion escribe la contrasena del ADMIN en 'adminPassword' (esta en tu archivo .env, linea ADMIN_PASSWORD). No la guardes en este archivo porque se sube a GitHub.\n\nRequiere encendidos: usuario (8081) y autenticacion (8082). Ejecutar en orden (Run collection).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8082" },
+    { "key": "adminCorreo", "value": "admin@grupo1015.com" },
+    { "key": "adminPassword", "value": "" },
+    { "key": "passwordPrueba", "value": "Clave123" },
+    { "key": "correoPrueba", "value": "" },
+    { "key": "cuentaId", "value": "" },
+    { "key": "tokenUsuario", "value": "" },
+    { "key": "tokenAdmin", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "01. Registro (invitado se registra)",
+      "event": [
+        { "listen": "prerequest", "script": { "exec": [
+          "// Correo distinto en cada ejecucion para no chocar con registros anteriores",
+          "pm.collectionVariables.set(\"correoPrueba\", \"prueba\" + Date.now() + \"@correo.com\");"
+        ] } },
+        { "listen": "test", "script": { "exec": [
+          "pm.test(\"201 Created\", () => pm.response.to.have.status(201));",
+          "const r = pm.response.json();",
+          "pm.test(\"Rol USUARIO y plan ESTANDAR\", () => { pm.expect(r.rol).to.eql(\"USUARIO\"); pm.expect(r.plan).to.eql(\"ESTANDAR\"); });",
+          "pm.test(\"No devuelve la contrasena\", () => pm.expect(r).to.not.have.property(\"password\"));",
+          "pm.collectionVariables.set(\"cuentaId\", r.id);"
+        ] } }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/auth/registro",
+        "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Prueba\",\n  \"apellido\": \"Postman\",\n  \"correo\": \"{{correoPrueba}}\",\n  \"password\": \"{{passwordPrueba}}\"\n}" }
+      }
+    },
+    {
+      "name": "02. Registro con correo repetido (409)",
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test(\"409 Conflict\", () => pm.response.to.have.status(409));"
+      ] } }],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/auth/registro",
+        "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Prueba\",\n  \"apellido\": \"Postman\",\n  \"correo\": \"{{correoPrueba}}\",\n  \"password\": \"{{passwordPrueba}}\"\n}" }
+      }
+    },
+    {
+      "name": "03. Login con contrasena incorrecta (401)",
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test(\"401 Unauthorized\", () => pm.response.to.have.status(401));"
+      ] } }],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/auth/login",
+        "body": { "mode": "raw", "raw": "{\n  \"correo\": \"{{correoPrueba}}\",\n  \"password\": \"incorrecta\"\n}" }
+      }
+    },
+    {
+      "name": "04. Login USUARIO (guarda tokenUsuario)",
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test(\"200 OK\", () => pm.response.to.have.status(200));",
+        "const r = pm.response.json();",
+        "pm.test(\"Devuelve token Bearer\", () => { pm.expect(r.token).to.be.a(\"string\"); pm.expect(r.tipo).to.eql(\"Bearer\"); });",
+        "pm.collectionVariables.set(\"tokenUsuario\", r.token);"
+      ] } }],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/auth/login",
+        "body": { "mode": "raw", "raw": "{\n  \"correo\": \"{{correoPrueba}}\",\n  \"password\": \"{{passwordPrueba}}\"\n}" }
+      }
+    },
+    {
+      "name": "05. Validar como INVITADO, sin token (401)",
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test(\"401 Unauthorized\", () => pm.response.to.have.status(401));"
+      ] } }],
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/auth/validar" }
+    },
+    {
+      "name": "06. Validar USUARIO estandar (200)",
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test(\"200 OK\", () => pm.response.to.have.status(200));",
+        "pm.test(\"Sin acceso premium\", () => pm.expect(pm.response.json().accesoPremium).to.eql(false));"
+      ] } }],
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{tokenUsuario}}" }],
+        "url": "{{baseUrl}}/api/auth/validar"
+      }
+    },
+    {
+      "name": "07. USUARIO intenta entrar a admin (403)",
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test(\"403 Forbidden\", () => pm.response.to.have.status(403));"
+      ] } }],
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{tokenUsuario}}" }],
+        "url": "{{baseUrl}}/api/auth/admin/cuentas"
+      }
+    },
+    {
+      "name": "08. Login ADMIN (guarda tokenAdmin)",
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test(\"200 OK (si falla, revisa la variable adminPassword)\", () => pm.response.to.have.status(200));",
+        "pm.collectionVariables.set(\"tokenAdmin\", pm.response.json().token);"
+      ] } }],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/auth/login",
+        "body": { "mode": "raw", "raw": "{\n  \"correo\": \"{{adminCorreo}}\",\n  \"password\": \"{{adminPassword}}\"\n}" }
+      }
+    },
+    {
+      "name": "09. ADMIN lista las cuentas (200)",
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test(\"200 OK\", () => pm.response.to.have.status(200));",
+        "pm.test(\"Ninguna cuenta muestra contrasena\", () => pm.response.json().forEach(c => pm.expect(c).to.not.have.property(\"password\")));"
+      ] } }],
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{tokenAdmin}}" }],
+        "url": "{{baseUrl}}/api/auth/admin/cuentas"
+      }
+    },
+    {
+      "name": "10. ADMIN activa PREMIUM a la cuenta de prueba",
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test(\"200 OK\", () => pm.response.to.have.status(200));",
+        "pm.test(\"Plan PREMIUM\", () => pm.expect(pm.response.json().plan).to.eql(\"PREMIUM\"));"
+      ] } }],
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{tokenAdmin}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": "{{baseUrl}}/api/auth/admin/cuentas/{{cuentaId}}/plan",
+        "body": { "mode": "raw", "raw": "{\n  \"plan\": \"PREMIUM\"\n}" }
+      }
+    },
+    {
+      "name": "11. Validar USUARIO ahora PREMIUM (mismo token)",
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test(\"200 OK\", () => pm.response.to.have.status(200));",
+        "pm.test(\"Con acceso premium sin volver a iniciar sesion\", () => pm.expect(pm.response.json().accesoPremium).to.eql(true));"
+      ] } }],
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{tokenUsuario}}" }],
+        "url": "{{baseUrl}}/api/auth/validar"
+      }
+    },
+    {
+      "name": "12. ADMIN cambia plan de cuenta inexistente (404)",
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test(\"404 Not Found\", () => pm.response.to.have.status(404));"
+      ] } }],
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{tokenAdmin}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": "{{baseUrl}}/api/auth/admin/cuentas/999999/plan",
+        "body": { "mode": "raw", "raw": "{\n  \"plan\": \"PREMIUM\"\n}" }
+      }
+    },
+    {
+      "name": "13. ADMIN regresa la cuenta de prueba a ESTANDAR",
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test(\"200 OK\", () => pm.response.to.have.status(200));",
+        "pm.test(\"Plan ESTANDAR\", () => pm.expect(pm.response.json().plan).to.eql(\"ESTANDAR\"));"
+      ] } }],
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{tokenAdmin}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": "{{baseUrl}}/api/auth/admin/cuentas/{{cuentaId}}/plan",
+        "body": { "mode": "raw", "raw": "{\n  \"plan\": \"ESTANDAR\"\n}" }
+      }
+    }
+  ]
+}
