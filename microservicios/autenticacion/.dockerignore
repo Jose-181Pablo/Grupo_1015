@@ -1,0 +1,7 @@
+target/
+postman/
+.idea/
+*.iml
+HELP.md
+INTEGRACION.md
+.env

@@ -1,7 +1,11 @@
-# Base de datos del microservicio autenticacion (MariaDB en Docker).
-# Las contrasenas se leen del archivo .env (ver .env.example).
-# Levantar:  docker compose up -d
-# Apagar:    docker compose down
+# Microservicio autenticacion + su base de datos (MariaDB) en Docker.
+# Las contrasenas y la clave del JWT se leen del archivo .env (ver .env.example).
+#
+# IMPORTANTE: autenticacion llama a usuario (registro y ADMIN inicial).
+# Primero levanta usuario:   docker compose -f ../usuario/docker-compose.yml up -d --build
+# Despues este:              docker compose up -d --build
+# Solo la BD:                docker compose up -d autenticacion-db
+# Apagar:                    docker compose down
 services:
   autenticacion-db:
     image: mariadb:11.4
@@ -21,5 +25,30 @@ services:
       timeout: 5s
       retries: 20
 
+  autenticacion:
+    build: .
+    container_name: autenticacion
+    ports:
+      - "8082:8082"
+    environment:
+      # Dentro de Docker la BD se llama "autenticacion-db" y usa el puerto 3306
+      SPRING_DATASOURCE_URL: jdbc:mariadb://autenticacion-db:3306/${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRACION_MINUTOS: ${JWT_EXPIRACION_MINUTOS}
+      ADMIN_CORREO: ${ADMIN_CORREO}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      # Dentro de la red "grupo1015" el microservicio usuario se llama "usuario"
+      SERVICIOS_USUARIO_URL: http://usuario:8081
+    depends_on:
+      autenticacion-db:
+        condition: service_healthy   # espera a que MariaDB este lista
+
 volumes:
   autenticacion-db-data:
+
+# Red compartida con los demas microservicios (usuario tambien la usa)
+networks:
+  default:
+    name: grupo1015

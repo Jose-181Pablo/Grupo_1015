@@ -38,3 +38,8 @@ services:
 
 volumes:
   usuario-db-data:
+
+# Red compartida con los demas microservicios (autenticacion llama a "usuario" por aqui)
+networks:
+  default:
+    name: grupo1015
