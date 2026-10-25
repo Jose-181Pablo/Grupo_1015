@@ -1,20 +1,40 @@
-# Levanta todo con:  docker compose up --build
-# Apaga todo con:    docker compose down        (agrega -v para borrar también la base de datos)
+# Levanta todo con:  docker compose up -d --build
+# Apaga todo con:    docker compose down        (agrega -v para borrar también las bases de datos)
+#
+# Puertos asignados por el equipo: 8761 Eureka · 8083 inmuebles (catálogo) · 8084 terrenos
+# Cada microservicio tiene SU PROPIA base de datos.
 services:
 
-  postgres-inmobiliaria:
+  postgres-inmuebles:
     image: postgres:17
-    container_name: postgres-inmobiliaria
+    container_name: postgres-inmuebles
     environment:
-      POSTGRES_DB: inmobiliaria_db
+      POSTGRES_DB: inmuebles_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "5433:5432"
+      - "5433:5432"   # 5433 en tu compu, para no chocar con un PostgreSQL instalado en Windows
     volumes:
-      - datos-inmobiliaria:/var/lib/postgresql/data
+      - datos-inmuebles:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d inmobiliaria_db"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d inmuebles_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  postgres-terrenos:
+    image: postgres:17
+    container_name: postgres-terrenos
+    environment:
+      POSTGRES_DB: terrenos_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"   # 5434 en tu compu
+    volumes:
+      - datos-terrenos:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d terrenos_db"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -25,22 +45,39 @@ services:
     ports:
       - "8761:8761"
 
-  inmobiliaria-service:
-    build: ./inmobiliaria-service
-    container_name: inmobiliaria-service
+  inmuebles-service:
+    build: ./inmuebles-service
+    container_name: inmuebles-service
     ports:
-      - "8082:8082"
+      - "8083:8083"
     environment:
       # Dentro de Docker los contenedores se encuentran por su nombre, no por "localhost"
-      DB_URL: jdbc:postgresql://postgres-inmobiliaria:5432/inmobiliaria_db
+      DB_URL: jdbc:postgresql://postgres-inmuebles:5432/inmuebles_db
       DB_USER: postgres
       DB_PASSWORD: postgres
       EUREKA_URL: http://eureka-server:8761/eureka/
     depends_on:
-      postgres-inmobiliaria:
+      postgres-inmuebles:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+
+  terrenos-service:
+    build: ./terrenos-service
+    container_name: terrenos-service
+    ports:
+      - "8084:8084"
+    environment:
+      DB_URL: jdbc:postgresql://postgres-terrenos:5432/terrenos_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      EUREKA_URL: http://eureka-server:8761/eureka/
+    depends_on:
+      postgres-terrenos:
         condition: service_healthy
       eureka-server:
         condition: service_started
 
 volumes:
-  datos-inmobiliaria:
+  datos-inmuebles:
+  datos-terrenos:
