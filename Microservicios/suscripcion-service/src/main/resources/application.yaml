@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: suscripcion-service
+
+  datasource:
+    url: ${DB_URL:jdbc:mariadb://localhost:3311/suscripcion_db}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
+
+server:
+  port: ${PORT:8088}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+# Microservicio de autenticación (rama liz).
+# La cuenta de servicio debe tener rol ADMIN para poder cambiar el plan de las cuentas.
+autenticacion:
+  url: ${AUTENTICACION_URL:http://localhost:8082}
+  correo: ${AUTENTICACION_CORREO:}
+  password: ${AUTENTICACION_PASSWORD:}
+
+# Cada cuánto se buscan suscripciones vencidas (en milisegundos). 3600000 = cada hora.
+suscripciones:
+  revision-vencidas-ms: ${REVISION_VENCIDAS_MS:3600000}

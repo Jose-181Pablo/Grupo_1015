@@ -1,0 +1,75 @@
+### Maven / Spring Boot ###
+HELP.md
+target/
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# El Maven Wrapper sí debe subirse
+!.mvn/wrapper/maven-wrapper.jar
+
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+
+### STS / Eclipse ###
+.apt_generated/
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache/
+
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+
+### VS Code ###
+.vscode/
+
+
+### Secretos y variables de entorno ###
+.env
+.env.*
+!.env.example
+
+application-local.yml
+application-local.yaml
+application-local.properties
+
+
+### Llaves y certificados privados ###
+*.key
+*.pem
+*.p12
+*.pfx
+*.jks
+
+
+### Docker local ###
+docker-compose.override.yml
+
+
+### Logs y errores de Java ###
+*.log
+logs/
+hs_err_pid*
+replay_pid*
+
+
+### Windows ###
+Thumbs.db
+Desktop.ini

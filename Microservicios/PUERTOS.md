@@ -12,7 +12,7 @@ Lista única acordada para que todos los microservicios puedan levantarse al mis
 | 8085 | chat-ia-service | `aldo` | MariaDB | 3310 | Listo |
 | 8086 | citas | `gene1` | MariaDB compartida | 3307 | Cambiar de 8081 a 8086 |
 | 8087 | ofertas | `gene1` | MariaDB compartida | 3307 | Cambiar de 8082 a 8087 |
-| 8088 | suscripcion-service | — | MariaDB | 3311 | Reservado |
+| 8088 | suscripcion-service | `aldo` | MariaDB | 3311 | Listo |
 | 8761 | eureka-server | `pablo` | — | — | Listo |
 
 ## Notas

@@ -1,0 +1,55 @@
+services:
+  suscripcion-db:
+    image: mariadb:11.8
+    container_name: suscripcion-db
+    restart: unless-stopped
+
+    environment:
+      MARIADB_DATABASE: suscripcion_db
+      MARIADB_USER: suscripcion_user
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+
+    ports:
+      - "3311:3306"
+
+    volumes:
+      - suscripcion_data:/var/lib/mysql
+
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  suscripcion-service:
+    build: .
+    container_name: suscripcion-service
+    restart: unless-stopped
+
+    environment:
+      DB_URL: jdbc:mariadb://suscripcion-db:3306/suscripcion_db
+      DB_USERNAME: suscripcion_user
+      DB_PASSWORD: ${DB_PASSWORD}
+      AUTENTICACION_URL: ${AUTENTICACION_URL:-http://autenticacion:8082}
+      AUTENTICACION_CORREO: ${AUTENTICACION_CORREO}
+      AUTENTICACION_PASSWORD: ${AUTENTICACION_PASSWORD}
+
+    # Permite llegar a autenticación si corre en tu equipo (IntelliJ) en lugar de Docker
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+    ports:
+      - "8088:8088"
+
+    depends_on:
+      suscripcion-db:
+        condition: service_healthy
+
+volumes:
+  suscripcion_data:
+
+# Red compartida con usuario y autenticación (rama liz)
+networks:
+  default:
+    name: grupo1015

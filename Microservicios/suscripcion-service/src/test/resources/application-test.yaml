@@ -1,0 +1,21 @@
+# Perfil "test": configuración usada solo por las pruebas: base de datos H2 en memoria,
+# así no se necesita MariaDB ni el microservicio de autenticación para ejecutarlas.
+spring:
+  datasource:
+    url: jdbc:h2:mem:suscripcion_test;MODE=MariaDB;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+
+autenticacion:
+  url: http://localhost:1
+  correo: servicio@prueba.com
+  password: prueba
+
+# Las pruebas llaman la revisión de vencidas a mano
+suscripciones:
+  revision-vencidas-ms: 86400000
