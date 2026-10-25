@@ -1,0 +1,39 @@
+server:
+  port: 8083   # puerto asignado por el equipo
+
+spring:
+  application:
+    # Con este nombre aparece en Eureka y lo encontrarán los otros microservicios
+    name: inmuebles-service
+
+  datasource:
+    # ${VARIABLE:valor} = usa la variable de entorno si existe; si no, el valor por defecto.
+    # Desde IntelliJ se usan los valores por defecto (localhost).
+    # Desde docker-compose se mandan DB_URL, DB_USER, DB_PASSWORD.
+    url: ${DB_URL:jdbc:postgresql://localhost:5433/inmuebles_db}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:postgres}
+
+  jpa:
+    hibernate:
+      ddl-auto: update        # crea/actualiza la tabla "inmuebles" automáticamente
+    show-sql: true
+    open-in-view: false
+    defer-datasource-initialization: true   # primero crea la tabla, luego corre data.sql
+
+  sql:
+    init:
+      mode: always            # carga los inmuebles de ejemplo de data.sql
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
+  instance:
+    prefer-ip-address: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

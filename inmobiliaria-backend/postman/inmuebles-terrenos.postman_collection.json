@@ -1,0 +1,450 @@
+{
+  "info": {
+    "name": "Inmuebles y Terrenos - Grupo 10.15",
+    "description": "Pruebas de los microservicios inmuebles-service (8083) y terrenos-service (8084). Corre cada carpeta en orden: el paso 5 guarda el id que usan los pasos 6 a 8.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Inmuebles (casas) - 8083",
+      "item": [
+        {
+          "name": "0. Salud del servicio",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{inmueblesUrl}}/actuator/health"
+          }
+        },
+        {
+          "name": "1. Listar todos",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Regresa una lista', () => pm.expect(pm.response.json()).to.be.an('array'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{inmueblesUrl}}/api/inmuebles"
+          }
+        },
+        {
+          "name": "2. Solo disponibles",
+          "request": {
+            "method": "GET",
+            "url": "{{inmueblesUrl}}/api/inmuebles?estatus=DISPONIBLE"
+          }
+        },
+        {
+          "name": "3. Buscar por ubicación (Tlajomulco)",
+          "request": {
+            "method": "GET",
+            "url": "{{inmueblesUrl}}/api/inmuebles?ubicacion=tlajomulco"
+          }
+        },
+        {
+          "name": "4. Buscar por clave (capri)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{inmueblesUrl}}/api/inmuebles/clave/capri"
+          }
+        },
+        {
+          "name": "5. Crear inmueble",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "pm.collectionVariables.set('idInmueble', pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{inmueblesUrl}}/api/inmuebles",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clave\": \"casa_postman\",\n  \"nombre\": \"Casa de Prueba Postman\",\n  \"ubicacion\": \"Zapopan, Jalisco\",\n  \"descripcion\": \"Casa creada desde Postman\",\n  \"precio\": 3500000,\n  \"terrenoM2\": 200,\n  \"construccionM2\": 180,\n  \"distribucion\": \"3 rec + 2 baños\",\n  \"amenidades\": \"Jardín\",\n  \"imagenUrl\": \"assets/images/prueba.jpg\"\n}"
+            }
+          }
+        },
+        {
+          "name": "6. Ver inmueble creado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{inmueblesUrl}}/api/inmuebles/{{idInmueble}}"
+          }
+        },
+        {
+          "name": "7. Actualizar (apartado y nuevo precio)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Quedó APARTADA', () => pm.expect(pm.response.json().estatus).to.eql('APARTADA'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{inmueblesUrl}}/api/inmuebles/{{idInmueble}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clave\": \"casa_postman\",\n  \"nombre\": \"Casa de Prueba Postman\",\n  \"ubicacion\": \"Zapopan, Jalisco\",\n  \"descripcion\": \"Casa creada desde Postman\",\n  \"precio\": 3300000,\n  \"terrenoM2\": 200,\n  \"construccionM2\": 180,\n  \"distribucion\": \"3 rec + 2 baños\",\n  \"amenidades\": \"Jardín\",\n  \"imagenUrl\": \"assets/images/prueba.jpg\",\n  \"estatus\": \"APARTADA\"\n}"
+            }
+          }
+        },
+        {
+          "name": "8. Eliminar inmueble",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 204', () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "url": "{{inmueblesUrl}}/api/inmuebles/{{idInmueble}}"
+          }
+        },
+        {
+          "name": "9. Error: datos inválidos (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{inmueblesUrl}}/api/inmuebles",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"\",\n  \"precio\": -5\n}"
+            }
+          }
+        },
+        {
+          "name": "10. Error: no existe (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 404', () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{inmueblesUrl}}/api/inmuebles/99999"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Terrenos - 8084",
+      "item": [
+        {
+          "name": "0. Salud del servicio",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{terrenosUrl}}/actuator/health"
+          }
+        },
+        {
+          "name": "1. Listar todos",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Regresa una lista', () => pm.expect(pm.response.json()).to.be.an('array'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{terrenosUrl}}/api/terrenos"
+          }
+        },
+        {
+          "name": "2. Solo disponibles",
+          "request": {
+            "method": "GET",
+            "url": "{{terrenosUrl}}/api/terrenos?estatus=DISPONIBLE"
+          }
+        },
+        {
+          "name": "3. Buscar por ubicación (Tlajomulco)",
+          "request": {
+            "method": "GET",
+            "url": "{{terrenosUrl}}/api/terrenos?ubicacion=tlajomulco"
+          }
+        },
+        {
+          "name": "4. Buscar por clave (lago_nogal)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{terrenosUrl}}/api/terrenos/clave/lago_nogal"
+          }
+        },
+        {
+          "name": "5. Crear terreno",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "pm.collectionVariables.set('idTerreno', pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{terrenosUrl}}/api/terrenos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clave\": \"terreno_postman\",\n  \"nombre\": \"Terreno de Prueba Postman\",\n  \"ubicacion\": \"Zapopan, Jalisco\",\n  \"descripcion\": \"Terreno creado desde Postman\",\n  \"precio\": 1800000,\n  \"superficieM2\": 300,\n  \"medidas\": \"12 x 25 m\",\n  \"usoSuelo\": \"Habitacional\",\n  \"amenidades\": \"Coto privado\",\n  \"imagenUrl\": \"assets/images/prueba.jpg\"\n}"
+            }
+          }
+        },
+        {
+          "name": "6. Ver terreno creado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{terrenosUrl}}/api/terrenos/{{idTerreno}}"
+          }
+        },
+        {
+          "name": "7. Actualizar (apartado y nuevo precio)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Quedó APARTADA', () => pm.expect(pm.response.json().estatus).to.eql('APARTADA'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{terrenosUrl}}/api/terrenos/{{idTerreno}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clave\": \"terreno_postman\",\n  \"nombre\": \"Terreno de Prueba Postman\",\n  \"ubicacion\": \"Zapopan, Jalisco\",\n  \"descripcion\": \"Terreno creado desde Postman\",\n  \"precio\": 1700000,\n  \"superficieM2\": 300,\n  \"medidas\": \"12 x 25 m\",\n  \"usoSuelo\": \"Habitacional\",\n  \"amenidades\": \"Coto privado\",\n  \"imagenUrl\": \"assets/images/prueba.jpg\",\n  \"estatus\": \"APARTADA\"\n}"
+            }
+          }
+        },
+        {
+          "name": "8. Eliminar terreno",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 204', () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "url": "{{terrenosUrl}}/api/terrenos/{{idTerreno}}"
+          }
+        },
+        {
+          "name": "9. Error: datos inválidos (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{terrenosUrl}}/api/terrenos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"\",\n  \"precio\": -5\n}"
+            }
+          }
+        },
+        {
+          "name": "10. Error: no existe (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 404', () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{terrenosUrl}}/api/terrenos/99999"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Eureka: servicios registrados",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "http://localhost:8761/eureka/apps"
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "inmueblesUrl",
+      "value": "http://localhost:8083"
+    },
+    {
+      "key": "terrenosUrl",
+      "value": "http://localhost:8084"
+    },
+    {
+      "key": "idInmueble",
+      "value": "1"
+    },
+    {
+      "key": "idTerreno",
+      "value": "1"
+    }
+  ]
+}
