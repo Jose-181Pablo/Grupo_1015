@@ -1,0 +1,10 @@
+# Levanta todos los microservicios de la rama aldo con un solo comando:
+#   docker compose up -d --build
+# Cada microservicio sigue teniendo su propio docker-compose.yml en su carpeta;
+# este archivo solo los incluye, así que cualquier cambio en ellos se toma aquí.
+#
+# Usa una sola forma a la vez: si los levantaste por separado, apágalos con
+# "docker compose down" en su carpeta antes de usar este archivo (y al revés).
+include:
+  - chat-ia-service/docker-compose.yml
+  - suscripcion-service/docker-compose.yml

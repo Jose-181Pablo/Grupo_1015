@@ -48,6 +48,8 @@ services:
 
 volumes:
   suscripcion_data:
+    # Nombre fijo: se usa la misma base aunque se levante desde Microservicios/docker-compose.yml
+    name: suscripcion-service_suscripcion_data
 
 # Red compartida con usuario y autenticación (rama liz)
 networks:

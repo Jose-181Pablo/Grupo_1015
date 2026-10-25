@@ -52,4 +52,11 @@ services:
         condition: service_healthy
 
 volumes:
-  chat_ia_data:
+  chat_ia_data:
+    # Nombre fijo: se usa la misma base aunque se levante desde Microservicios/docker-compose.yml
+    name: chat-ia-service_chat_ia_data
+
+# Red compartida con los demás microservicios del equipo
+networks:
+  default:
+    name: grupo1015
