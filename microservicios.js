@@ -8,8 +8,8 @@
 
 // Cuando exista el API Gateway, solo hay que cambiar estas dos URLs.
 const API_CONFIG = {
-    citas: 'http://localhost:8081/api/citas',
-    ofertas: 'http://localhost:8082/api/ofertas'
+    citas: 'http://localhost:8086/api/citas',
+    ofertas: 'http://localhost:8087/api/ofertas'
 };
 
 const formatoPrecio = new Intl.NumberFormat('es-MX', {

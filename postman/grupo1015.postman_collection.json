@@ -1,17 +1,17 @@
 {
   "info": {
     "name": "Grupo 10.15 - Microservicios",
-    "description": "Pruebas de los microservicios de Citas (8081) y Ofertas y Remates (8082). Ejecútala completa con Run collection: cada servicio crea sus datos de prueba y los borra al final.",
+    "description": "Pruebas de los microservicios de Citas (8086) y Ofertas y Remates (8087). Ejecútala completa con Run collection: cada servicio crea sus datos de prueba y los borra al final.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
     {
       "key": "citas_url",
-      "value": "http://localhost:8081"
+      "value": "http://localhost:8086"
     },
     {
       "key": "ofertas_url",
-      "value": "http://localhost:8082"
+      "value": "http://localhost:8087"
     },
     {
       "key": "citaId",
@@ -28,7 +28,7 @@
   ],
   "item": [
     {
-      "name": "Microservicio Citas (8081)",
+      "name": "Microservicio Citas (8086)",
       "item": [
         {
           "name": "1. Listar todas las citas",
@@ -242,7 +242,7 @@
       ]
     },
     {
-      "name": "Microservicio Ofertas y Remates (8082)",
+      "name": "Microservicio Ofertas y Remates (8087)",
       "item": [
         {
           "name": "1. Listar ofertas y remates activos",

@@ -36,10 +36,10 @@ Toda la configuración se lee de variables de entorno, con valores por defecto p
 
 | Variable | Valor por defecto | Descripción |
 |---|---|---|
-| `PORT` | `8082` | Puerto del microservicio |
-| `DB_URL` | `jdbc:mariadb://localhost:3406/ofertas_db` | URL de la base de datos |
+| `PORT` | `8087` | Puerto del microservicio |
+| `DB_URL` | `jdbc:mariadb://localhost:3307/ofertas_db` | URL de la base de datos |
 | `DB_USER` | `grupo1015` | Usuario de la base de datos |
-| `DB_PASSWORD` | *(sin valor, obligatoria)* | Contraseña de la base de datos |
+| `DB_PASSWORD` | `grupo1015` | Contraseña de la base de datos |
 
 > La contraseña nunca se escribe en el código. Cada integrante la configura en su equipo.
 
@@ -61,7 +61,7 @@ La tabla `oferta` se crea automáticamente al arrancar el microservicio (`ddl-au
 **Desde IntelliJ**
 
 1. Abrir `MicroservicioOfertasApplication` → ▶ junto a la clase → *Modify Run Configuration...*
-2. En *Environment variables* agregar `DB_PASSWORD=tu_contraseña`.
+2. En *Environment variables* (opcional) agregar `DB_PASSWORD=...` si cambiaste la contraseña; por defecto ya funciona con `grupo1015`.
 3. Ejecutar con ▶.
 
 **Desde la terminal (PowerShell)**, dentro de la carpeta del microservicio:
@@ -75,7 +75,7 @@ Arrancó bien cuando en la consola aparece `Started MicroservicioOfertasApplicat
 
 ## Endpoints
 
-URL base: `http://localhost:8082/api/ofertas`
+URL base: `http://localhost:8087/api/ofertas`
 
 | Método | Ruta | Descripción | Respuesta |
 |---|---|---|---|
@@ -126,7 +126,7 @@ Devuelve una lista vacía `[]` si no tiene ninguna.
 
 ## Monitoreo
 
-`GET http://localhost:8082/actuator/health` → indica si el servicio y su base de datos están funcionando (`"status": "UP"`).
+`GET http://localhost:8087/actuator/health` → indica si el servicio y su base de datos están funcionando (`"status": "UP"`).
 
 ## Pruebas
 
