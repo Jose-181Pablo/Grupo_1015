@@ -33,9 +33,10 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       GOOGLE_API_KEY: ${GOOGLE_API_KEY}
       GEMINI_MODEL: ${GEMINI_MODEL:-gemini-flash-latest}
-      CATALOGO_URL: ${CATALOGO_URL:-http://host.docker.internal:8082}
+      INMUEBLES_URL: ${INMUEBLES_URL:-http://host.docker.internal:8083}
+      TERRENOS_URL: ${TERRENOS_URL:-http://host.docker.internal:8084}
 
-    # Permite llegar al catálogo que corre en tu equipo (o en otro compose)
+    # Permite llegar a los catálogos que corren en tu equipo (o en otro compose)
     extra_hosts:
       - "host.docker.internal:host-gateway"
 

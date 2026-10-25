@@ -15,4 +15,5 @@ gemini:
   model: modelo-de-prueba
 
 catalogo:
-  url: http://localhost:1
+  inmuebles-url: http://localhost:1
+  terrenos-url: http://localhost:1

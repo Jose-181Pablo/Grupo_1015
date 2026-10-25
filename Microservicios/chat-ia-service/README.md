@@ -148,19 +148,20 @@ DELETE /api/v1/conversaciones/{conversacionId}
 
 ## Integración con el catálogo
 
-Antes de llamar a Gemini, el chat consulta el microservicio de catálogo (`inmobiliaria-service`, rama `pablo`) con:
+Antes de llamar a Gemini, el chat consulta los microservicios de catálogo de la rama `pablo`:
 
-```http
-GET {CATALOGO_URL}/api/propiedades/clave/{propiedadId}
-```
+| Microservicio | Puerto | Endpoint |
+|---|---:|---|
+| `inmuebles-service` (casas) | 8083 | `GET {INMUEBLES_URL}/api/inmuebles/clave/{propiedadId}` |
+| `terrenos-service` | 8084 | `GET {TERRENOS_URL}/api/terrenos/clave/{propiedadId}` |
 
-El `propiedadId` de la conversación es la misma clave que usa el catálogo (`lago_nogal`, `casa65`, `chapala`, etc.). Con esos datos (precio, ubicación, m², distribución, amenidades y estatus) el asistente responde sin inventar información.
+Primero busca la clave en inmuebles y, si no está, en terrenos. El `propiedadId` de la conversación es la misma clave que usa el catálogo (`casa65`, `chapala`, `lago_nogal`, etc.). Con esos datos (precio, ubicación, m², distribución o medidas, uso de suelo, amenidades y estatus) el asistente responde sin inventar información.
 
-- Desde IntelliJ se usa `http://localhost:8082`.
-- Desde Docker se usa `http://host.docker.internal:8082`, que apunta al catálogo levantado en tu equipo.
-- Se cambia con la variable `CATALOGO_URL`.
+- Desde IntelliJ se usan `http://localhost:8083` y `http://localhost:8084`.
+- Desde Docker se usa `host.docker.internal`, que apunta a los catálogos levantados en tu equipo.
+- Se cambian con las variables `INMUEBLES_URL` y `TERRENOS_URL`.
 
-Si el catálogo está apagado o no tiene la propiedad, el chat sigue funcionando y el asistente indica que un asesor puede dar la información.
+Si los catálogos están apagados o no tienen la propiedad, el chat sigue funcionando y el asistente indica que un asesor puede dar la información.
 
 ## Pruebas
 

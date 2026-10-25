@@ -47,7 +47,7 @@ class ChatControllerTests {
                 "lago_nogal", "Lago Nogal", "TERRENO",
                 "Fracc. Lago Nogal, Zona Sur de Guadalajara", null,
                 new BigDecimal("5490000"), new BigDecimal("448"), null,
-                "Terreno en esquina 16 x 28 m", null, "DISPONIBLE"
+                null, "16 x 28 m", "Habitacional", null, "DISPONIBLE"
         );
 
         when(catalogoClient.buscarPorClave("lago_nogal"))

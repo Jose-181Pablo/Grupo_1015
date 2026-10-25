@@ -14,8 +14,9 @@ import java.time.Duration;
 import java.util.Optional;
 
 /**
- * Consulta el microservicio de catálogo (inmobiliaria-service, rama pablo).
- * Si el catálogo no responde o no tiene la propiedad, regresa vacío para que
+ * Consulta los microservicios de catálogo de la rama pablo:
+ * primero inmuebles-service (casas) y, si no tiene la clave, terrenos-service.
+ * Si ninguno responde o no tienen la propiedad, regresa vacío para que
  * el chat siga funcionando sin esos datos.
  */
 @Component
@@ -23,35 +24,56 @@ public class CatalogoClient {
 
     private static final Logger log = LoggerFactory.getLogger(CatalogoClient.class);
 
-    private final RestClient restClient;
+    private final RestClient inmuebles;
+    private final RestClient terrenos;
 
-    public CatalogoClient(@Value("${catalogo.url}") String urlCatalogo) {
-        SimpleClientHttpRequestFactory fabrica = new SimpleClientHttpRequestFactory();
-        fabrica.setConnectTimeout(Duration.ofSeconds(3));
-        fabrica.setReadTimeout(Duration.ofSeconds(5));
-
-        this.restClient = RestClient.builder()
-                .baseUrl(urlCatalogo)
-                .requestFactory(fabrica)
-                .build();
+    public CatalogoClient(
+            @Value("${catalogo.inmuebles-url}") String urlInmuebles,
+            @Value("${catalogo.terrenos-url}") String urlTerrenos
+    ) {
+        this.inmuebles = crearCliente(urlInmuebles);
+        this.terrenos = crearCliente(urlTerrenos);
     }
 
     public Optional<PropiedadCatalogo> buscarPorClave(String clave) {
+        return buscar(inmuebles, "/api/inmuebles/clave/{clave}", clave, "inmuebles")
+                .map(propiedad -> propiedad.conCategoria("CASA"))
+                .or(() -> buscar(terrenos, "/api/terrenos/clave/{clave}", clave, "terrenos")
+                        .map(propiedad -> propiedad.conCategoria("TERRENO")));
+    }
+
+    private Optional<PropiedadCatalogo> buscar(
+            RestClient cliente,
+            String ruta,
+            String clave,
+            String servicio
+    ) {
         try {
-            PropiedadCatalogo propiedad = restClient.get()
-                    .uri("/api/propiedades/clave/{clave}", clave)
+            PropiedadCatalogo propiedad = cliente.get()
+                    .uri(ruta, clave)
                     .retrieve()
                     .body(PropiedadCatalogo.class);
 
             return Optional.ofNullable(propiedad);
 
         } catch (HttpClientErrorException.NotFound exception) {
-            log.warn("El catálogo no tiene la propiedad con clave {}", clave);
+            log.debug("El catálogo de {} no tiene la propiedad con clave {}", servicio, clave);
             return Optional.empty();
 
         } catch (RestClientException exception) {
-            log.warn("No fue posible consultar el catálogo: {}", exception.getMessage());
+            log.warn("No fue posible consultar el catálogo de {}: {}", servicio, exception.getMessage());
             return Optional.empty();
         }
+    }
+
+    private static RestClient crearCliente(String url) {
+        SimpleClientHttpRequestFactory fabrica = new SimpleClientHttpRequestFactory();
+        fabrica.setConnectTimeout(Duration.ofSeconds(3));
+        fabrica.setReadTimeout(Duration.ofSeconds(5));
+
+        return RestClient.builder()
+                .baseUrl(url)
+                .requestFactory(fabrica)
+                .build();
     }
 }

@@ -26,6 +26,7 @@ management:
 gemini:
   model: ${GEMINI_MODEL:gemini-flash-latest}
 
-# Microservicio de catálogo (inmobiliaria-service de la rama pablo).
+# Microservicios de catálogo de la rama pablo: casas (inmuebles-service) y terrenos (terrenos-service).
 catalogo:
-  url: ${CATALOGO_URL:http://localhost:8082}
+  inmuebles-url: ${INMUEBLES_URL:http://localhost:8083}
+  terrenos-url: ${TERRENOS_URL:http://localhost:8084}

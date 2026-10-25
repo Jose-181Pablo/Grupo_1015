@@ -138,9 +138,11 @@ public class GeminiService {
         agregarDato(prompt, "Ubicación", datos.ubicacion());
         agregarDato(prompt, "Descripción", datos.descripcion());
         agregarDato(prompt, "Precio (MXN)", formatear(datos.precio()));
-        agregarDato(prompt, "Terreno (m²)", formatear(datos.terrenoM2()));
+        agregarDato(prompt, "Superficie del terreno (m²)", formatear(datos.terrenoM2()));
         agregarDato(prompt, "Construcción (m²)", formatear(datos.construccionM2()));
         agregarDato(prompt, "Distribución", datos.distribucion());
+        agregarDato(prompt, "Medidas", datos.medidas());
+        agregarDato(prompt, "Uso de suelo", datos.usoSuelo());
         agregarDato(prompt, "Amenidades", datos.amenidades());
         agregarDato(prompt, "Estatus", datos.estatus());
 
