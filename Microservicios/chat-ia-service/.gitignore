@@ -41,10 +41,9 @@ build/
 .vscode/
 
 
-### Secretos y variables de entorno ###
-.env
-.env.*
-!.env.example
+### Secretos ###
+# Los .env sí se suben (repositorio privado); solo la clave de Gemini se queda local
+gemini.env
 
 application-local.yml
 application-local.yaml

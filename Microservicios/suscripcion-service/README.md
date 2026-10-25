@@ -63,7 +63,7 @@ AUTENTICACION_CORREO=suscripcion@grupo1015.com
 AUTENTICACION_PASSWORD=contraseña_de_la_cuenta_de_servicio
 ```
 
-El archivo `.env` contiene información privada y no debe subirse al repositorio.
+El archivo `.env` se sube al repositorio porque es privado; así cada integrante tiene la misma configuración.
 
 ### Cuenta de servicio
 

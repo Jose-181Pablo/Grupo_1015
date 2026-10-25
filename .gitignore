@@ -2,10 +2,9 @@
 # DATOS SENSIBLES
 # ==============================
 
-# Variables de entorno
-.env
-.env.*
-!.env.example
+# Clave de la API de Gemini: es lo único privado que no se sube (ver gemini.env.example).
+# Los .env sí se suben porque el repositorio es privado y los necesita cada microservicio.
+gemini.env
 
 # Configuraciones locales con credenciales
 application-local.yml
@@ -82,11 +81,6 @@ build/
 
 *.log
 logs/
-
-# Variables privadas
-.env
-.env.*
-!.env.example
 
 # ==============================
 # WINDOWS

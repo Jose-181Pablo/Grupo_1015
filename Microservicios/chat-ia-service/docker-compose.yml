@@ -27,11 +27,15 @@ services:
     container_name: chat-ia-service
     restart: unless-stopped
 
+    # La clave de Gemini vive en gemini.env, que no se sube a git
+    env_file:
+      - path: gemini.env
+        required: false
+
     environment:
       DB_URL: jdbc:mariadb://chat-db:3306/chat_ia_db
       DB_USERNAME: chat_user
       DB_PASSWORD: ${DB_PASSWORD}
-      GOOGLE_API_KEY: ${GOOGLE_API_KEY}
       GEMINI_MODEL: ${GEMINI_MODEL:-gemini-flash-latest}
       INMUEBLES_URL: ${INMUEBLES_URL:-http://host.docker.internal:8083}
       TERRENOS_URL: ${TERRENOS_URL:-http://host.docker.internal:8084}

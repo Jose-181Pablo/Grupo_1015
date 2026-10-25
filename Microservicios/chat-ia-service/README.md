@@ -42,20 +42,19 @@ src/main/java/mx/grupo1015/chatia
 
 ## Variables de entorno
 
-Antes de ejecutar el proyecto, copia `.env.example` como `.env` y llena los valores:
+El archivo `.env` (contraseñas de la base y modelo de Gemini) se sube al repositorio porque es privado.
+
+La clave de Gemini es lo único que se queda en tu equipo. Copia `gemini.env.example` como `gemini.env` y pon tu clave:
 
 ```bash
-cp .env.example .env
+cp gemini.env.example gemini.env
 ```
 
 ```env
-DB_PASSWORD=contraseña_de_la_base
-DB_ROOT_PASSWORD=contraseña_del_usuario_root
 GOOGLE_API_KEY=clave_de_gemini
-GEMINI_MODEL=gemini-flash-latest
 ```
 
-El archivo `.env` contiene información privada y no debe subirse al repositorio.
+`gemini.env` está en `.gitignore` y Docker Compose lo lee al levantar el chat. Desde IntelliJ, pon `GOOGLE_API_KEY` en las variables de entorno de la configuración de ejecución.
 
 ## Ejecución con Docker
 
@@ -192,9 +191,8 @@ Los datos se conservan en un volumen de Docker aunque los contenedores sean dete
 
 ## Seguridad
 
-- La clave de Gemini no se guarda en el código.
+- La clave de Gemini no se guarda en el código ni en git (vive en `gemini.env`).
 - Las contraseñas se proporcionan mediante variables de entorno.
-- El archivo `.env` está excluido mediante `.gitignore`.
 - La autenticación con JWT será gestionada posteriormente por el microservicio correspondiente.
 
 ## Mejoras futuras
