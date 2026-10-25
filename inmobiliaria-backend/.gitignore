@@ -13,3 +13,4 @@ Thumbs.db
 # Variables locales / secretos
 .env
 *.log
+GUIA-PASO-A-PASO.md
