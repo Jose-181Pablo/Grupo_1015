@@ -2,6 +2,7 @@ package com.grupo1015.terrenos.controller;
 
 import com.grupo1015.terrenos.model.Estatus;
 import com.grupo1015.terrenos.model.Terreno;
+import com.grupo1015.terrenos.service.OfertasService;
 import com.grupo1015.terrenos.service.TerrenoService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -17,7 +18,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * CONTROLADOR: recibe las peticiones HTTP (Postman o la página web) y responde JSON.
@@ -29,9 +34,11 @@ import java.util.List;
 public class TerrenoController {
 
     private final TerrenoService service;
+    private final OfertasService ofertasService;
 
-    public TerrenoController(TerrenoService service) {
+    public TerrenoController(TerrenoService service, OfertasService ofertasService) {
         this.service = service;
+        this.ofertasService = ofertasService;
     }
 
     // GET /api/terrenos            -> todos
@@ -66,5 +73,18 @@ public class TerrenoController {
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         service.eliminar(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // GET /api/terrenos/precio-casa/hacienda -> precio final de la oferta de esa casa
+    @GetMapping("/precio-casa/{propiedad}")
+    public Map<String, Object> precioCasa(@PathVariable String propiedad) {
+        Map<String, Object> respuesta = new LinkedHashMap<>();
+        respuesta.put("propiedad", propiedad);
+        Optional<BigDecimal> precio = ofertasService.precioFinalDe(propiedad);
+        respuesta.put("precioFinal", precio.orElse(null));
+        respuesta.put("mensaje", precio.isPresent()
+                ? "Oferta activa encontrada"
+                : "Sin oferta activa o el servicio de ofertas no está disponible");
+        return respuesta;
     }
 }

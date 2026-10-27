@@ -25,6 +25,10 @@ spring:
     init:
       mode: always            # carga los terrenos de ejemplo de data.sql
 
+# Microservicio de ofertas (Génesis, puerto 8087). Se puede cambiar con la variable OFERTAS_URL.
+ofertas:
+  url: ${OFERTAS_URL:http://localhost:8087/api/ofertas}
+
 eureka:
   client:
     service-url:
