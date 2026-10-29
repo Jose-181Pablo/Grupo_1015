@@ -36,6 +36,7 @@ services:
       DB_URL: jdbc:mariadb://chat-db:3306/chat_ia_db
       DB_USERNAME: chat_user
       DB_PASSWORD: ${DB_PASSWORD}
+      EUREKA_URL: ${EUREKA_URL:-http://eureka-server:8761/eureka/}
       GEMINI_MODEL: ${GEMINI_MODEL:-gemini-flash-latest}
       INMUEBLES_URL: ${INMUEBLES_URL:-http://host.docker.internal:8083}
       TERRENOS_URL: ${TERRENOS_URL:-http://host.docker.internal:8084}

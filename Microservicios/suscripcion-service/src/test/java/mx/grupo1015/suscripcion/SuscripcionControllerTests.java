@@ -81,6 +81,10 @@ class SuscripcionControllerTests {
 
         verify(autenticacionClient).cambiarPlan(2L, "PREMIUM");
 
+        // Desde aquí autenticación ya responde que la cuenta es PREMIUM
+        when(autenticacionClient.validar(TOKEN_MARIA))
+                .thenReturn(Optional.of(cuenta(2L, "maria@correo.com", "PREMIUM")));
+
         mockMvc.perform(get("/api/v1/suscripciones/actual")
                         .header("Authorization", TOKEN_MARIA))
                 .andExpect(status().isOk())
@@ -111,6 +115,61 @@ class SuscripcionControllerTests {
                         .header("Authorization", TOKEN_MARIA))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1));
+    }
+
+    @Test
+    void cancelaLaSuscripcionSiUnAdminQuitoPremiumEnAutenticacion() throws Exception {
+        String token = "Bearer token-sofia";
+
+        when(autenticacionClient.validar(token))
+                .thenReturn(Optional.of(cuenta(5L, "sofia@correo.com")));
+
+        mockMvc.perform(post("/api/v1/suscripciones")
+                        .header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                { "planCodigo": "PREMIUM_ANUAL" }
+                                """))
+                .andExpect(status().isCreated());
+
+        // El ADMIN regresó la cuenta a ESTANDAR directamente en autenticación
+        mockMvc.perform(get("/api/v1/suscripciones/actual")
+                        .header("Authorization", token))
+                .andExpect(status().isNotFound());
+
+        mockMvc.perform(get("/api/v1/suscripciones")
+                        .header("Authorization", token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].estado").value("CANCELADA"))
+                .andExpect(jsonPath("$[0].fechaCancelacion").exists());
+
+        // Ya puede volver a contratar
+        mockMvc.perform(post("/api/v1/suscripciones")
+                        .header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                { "planCodigo": "PREMIUM_MENSUAL" }
+                                """))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    void noDejaContratarAUnAdmin() throws Exception {
+        when(autenticacionClient.validar("Bearer token-admin"))
+                .thenReturn(Optional.of(new CuentaAutenticada(
+                        1L, "admin@grupo1015.com", null, "ADMIN", "PREMIUM", true
+                )));
+
+        mockMvc.perform(post("/api/v1/suscripciones")
+                        .header("Authorization", "Bearer token-admin")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                { "planCodigo": "PREMIUM_MENSUAL" }
+                                """))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.mensaje").exists());
+
+        verify(autenticacionClient, never()).cambiarPlan(any(), any());
     }
 
     @Test
@@ -178,6 +237,10 @@ class SuscripcionControllerTests {
     }
 
     private CuentaAutenticada cuenta(Long cuentaId, String correo) {
-        return new CuentaAutenticada(cuentaId, correo, cuentaId, "USUARIO", "ESTANDAR", false);
+        return cuenta(cuentaId, correo, "ESTANDAR");
+    }
+
+    private CuentaAutenticada cuenta(Long cuentaId, String correo, String plan) {
+        return new CuentaAutenticada(cuentaId, correo, cuentaId, "USUARIO", plan, "PREMIUM".equals(plan));
     }
 }

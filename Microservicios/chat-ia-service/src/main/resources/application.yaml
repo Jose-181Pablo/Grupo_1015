@@ -30,3 +30,11 @@ gemini:
 catalogo:
   inmuebles-url: ${INMUEBLES_URL:http://localhost:8083}
   terrenos-url: ${TERRENOS_URL:http://localhost:8084}
+
+# Registro en Eureka. Desde IntelliJ usa localhost; en Docker se manda EUREKA_URL.
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
+  instance:
+    prefer-ip-address: true

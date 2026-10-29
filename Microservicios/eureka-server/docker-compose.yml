@@ -1,0 +1,15 @@
+# Servidor Eureka compartido por todos los microservicios del equipo.
+# Viene de la rama pablo (inmobiliaria-backend/eureka-server); aquí queda en la red grupo1015
+# para que cualquier microservicio lo encuentre como http://eureka-server:8761/eureka/
+services:
+  eureka-server:
+    build: .
+    container_name: eureka-server
+    restart: unless-stopped
+
+    ports:
+      - "8761:8761"
+
+networks:
+  default:
+    name: grupo1015

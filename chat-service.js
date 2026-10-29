@@ -1,7 +1,7 @@
 (() => {
     "use strict";
 
-    const API_BASE_URL = "http://localhost:8085/api/v1";
+    const API_BASE_URL = "http://localhost:8080/api/v1";
     const STORAGE_CONVERSACIONES = "grupo1015_chat_conversaciones";
     const STORAGE_USUARIO = "grupo1015_usuario_chat";
 

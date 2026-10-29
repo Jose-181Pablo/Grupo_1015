@@ -32,3 +32,11 @@ autenticacion:
 # Cada cuánto se buscan suscripciones vencidas (en milisegundos). 3600000 = cada hora.
 suscripciones:
   revision-vencidas-ms: ${REVISION_VENCIDAS_MS:3600000}
+
+# Registro en Eureka. Desde IntelliJ usa localhost; en Docker se manda EUREKA_URL.
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
+  instance:
+    prefer-ip-address: true

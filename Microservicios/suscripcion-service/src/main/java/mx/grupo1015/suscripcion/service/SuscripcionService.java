@@ -29,6 +29,7 @@ public class SuscripcionService {
 
     private static final String PLAN_PREMIUM = "PREMIUM";
     private static final String PLAN_ESTANDAR = "ESTANDAR";
+    private static final String ROL_ADMIN = "ADMIN";
 
     private final PlanRepository planRepository;
     private final SuscripcionRepository suscripcionRepository;
@@ -59,7 +60,14 @@ public class SuscripcionService {
     ) {
         CuentaAutenticada cuenta = autenticar(authorization);
 
-        if (buscarActiva(cuenta.cuentaId()) != null) {
+        // Un ADMIN ya tiene acceso PREMIUM por su rol; si contratara, al cancelar quedaría en ESTANDAR
+        if (ROL_ADMIN.equals(cuenta.rol())) {
+            throw new SuscripcionActivaException(
+                    "Las cuentas de administrador ya tienen acceso PREMIUM y no necesitan contratar un plan"
+            );
+        }
+
+        if (buscarActivaSincronizada(cuenta) != null) {
             throw new SuscripcionActivaException(
                     "Ya tienes una suscripción activa"
             );
@@ -88,10 +96,10 @@ public class SuscripcionService {
         return convertirSuscripcion(suscripcionRepository.save(suscripcion));
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public SuscripcionResponse obtenerActual(String authorization) {
         CuentaAutenticada cuenta = autenticar(authorization);
-        Suscripcion activa = buscarActiva(cuenta.cuentaId());
+        Suscripcion activa = buscarActivaSincronizada(cuenta);
 
         if (activa == null) {
             throw new RecursoNoEncontradoException(
@@ -102,9 +110,10 @@ public class SuscripcionService {
         return convertirSuscripcion(activa);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<SuscripcionResponse> obtenerHistorial(String authorization) {
         CuentaAutenticada cuenta = autenticar(authorization);
+        buscarActivaSincronizada(cuenta);
 
         return suscripcionRepository
                 .findByCuentaIdOrderByFechaCreacionDesc(cuenta.cuentaId())
@@ -116,7 +125,7 @@ public class SuscripcionService {
     @Transactional
     public SuscripcionResponse cancelar(String authorization) {
         CuentaAutenticada cuenta = autenticar(authorization);
-        Suscripcion activa = buscarActiva(cuenta.cuentaId());
+        Suscripcion activa = buscarActivaSincronizada(cuenta);
 
         if (activa == null) {
             throw new RecursoNoEncontradoException(
@@ -167,6 +176,31 @@ public class SuscripcionService {
                 .orElseThrow(() -> new NoAutenticadoException(
                         "Inicia sesión para administrar tu suscripción"
                 ));
+    }
+
+    /**
+     * Busca la suscripción activa y la compara con el plan real de la cuenta en autenticación.
+     * Si un ADMIN regresó la cuenta a ESTANDAR por su lado, la suscripción se marca como CANCELADA
+     * para que los dos microservicios digan lo mismo.
+     */
+    private Suscripcion buscarActivaSincronizada(CuentaAutenticada cuenta) {
+        Suscripcion activa = buscarActiva(cuenta.cuentaId());
+
+        if (activa != null && !PLAN_PREMIUM.equals(cuenta.plan())) {
+            activa.setEstado(EstadoSuscripcion.CANCELADA);
+            activa.setFechaCancelacion(LocalDateTime.now());
+            suscripcionRepository.save(activa);
+
+            log.info(
+                    "La suscripción {} se canceló porque la cuenta {} ya no es PREMIUM en autenticación",
+                    activa.getId(),
+                    cuenta.cuentaId()
+            );
+
+            return null;
+        }
+
+        return activa;
     }
 
     private Suscripcion buscarActiva(Long cuentaId) {

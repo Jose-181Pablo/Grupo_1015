@@ -1,0 +1,83 @@
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      server:
+        webflux:
+          # Cada ruta manda las peticiones al microservicio que busca en Eureka (lb://nombre-en-eureka)
+          routes:
+            - id: usuario
+              uri: lb://usuario
+              predicates:
+                - Path=/api/usuarios/**
+
+            - id: autenticacion
+              uri: lb://autenticacion
+              predicates:
+                - Path=/api/auth/**
+
+            - id: inmuebles
+              uri: lb://inmuebles-service
+              predicates:
+                - Path=/api/inmuebles/**
+
+            - id: terrenos
+              uri: lb://terrenos-service
+              predicates:
+                - Path=/api/terrenos/**
+
+            - id: chat
+              uri: lb://chat-ia-service
+              predicates:
+                - Path=/api/v1/conversaciones/**
+
+            - id: citas
+              uri: lb://microservicio-citas
+              predicates:
+                - Path=/api/citas/**
+
+            - id: ofertas
+              uri: lb://microservicio-ofertas
+              predicates:
+                - Path=/api/ofertas/**
+
+            - id: suscripciones
+              uri: lb://suscripcion-service
+              predicates:
+                - Path=/api/v1/suscripciones/**,/api/v1/planes/**
+
+          # Algunos microservicios ya mandan sus propios encabezados CORS;
+          # se deja solo uno para que el navegador no los rechace por repetidos.
+          default-filters:
+            - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials Vary, RETAIN_FIRST
+
+          # CORS en un solo lugar para la página web (abierta desde IntelliJ o un servidor local)
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowed-origin-patterns:
+                  - "http://localhost:*"
+                  - "http://127.0.0.1:*"
+                allowed-methods: "*"
+                allowed-headers: "*"
+                max-age: 3600
+
+server:
+  port: ${PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+
+# Registro en Eureka. Desde IntelliJ usa localhost; en Docker se manda EUREKA_URL.
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
+    registry-fetch-interval-seconds: 5
+  instance:
+    prefer-ip-address: true

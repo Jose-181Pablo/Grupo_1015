@@ -1,0 +1,17 @@
+# API Gateway: puerta de entrada única (http://localhost:8080) a todos los microservicios.
+# Busca a cada microservicio en Eureka, así que debe estar en la red grupo1015.
+services:
+  api-gateway:
+    build: .
+    container_name: api-gateway
+    restart: unless-stopped
+
+    environment:
+      EUREKA_URL: ${EUREKA_URL:-http://eureka-server:8761/eureka/}
+
+    ports:
+      - "8080:8080"
+
+networks:
+  default:
+    name: grupo1015

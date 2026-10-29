@@ -7,12 +7,16 @@ import mx.grupo1015.chatia.dto.PropiedadCatalogo;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.cloud.client.DefaultServiceInstance;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -118,6 +122,49 @@ class CatalogoClientTests {
         CatalogoClient sinCatalogo = new CatalogoClient("http://localhost:1", "http://localhost:1");
 
         assertThat(sinCatalogo.buscarPorClave("lago_nogal")).isEmpty();
+    }
+
+    @Test
+    void usaLaDireccionQueDaEureka() {
+        int puerto = servidor.getAddress().getPort();
+        DiscoveryClient eureka = eurekaFalso(puerto);
+
+        // Las URLs fijas no responden: solo funciona si usa la dirección de Eureka
+        CatalogoClient conEureka = new CatalogoClient(
+                "http://localhost:1", "http://localhost:1", Optional.of(eureka)
+        );
+
+        assertThat(conEureka.buscarPorClave("casa65")).isPresent();
+        assertThat(conEureka.buscarPorClave("lago_nogal")).isPresent();
+    }
+
+    @Test
+    void usaLaUrlFijaSiEurekaDaUnaDireccionQueNoResponde() {
+        String url = "http://localhost:" + servidor.getAddress().getPort();
+        CatalogoClient conEurekaViejo = new CatalogoClient(url, url, Optional.of(eurekaFalso(1)));
+
+        assertThat(conEurekaViejo.buscarPorClave("lago_nogal")).isPresent();
+    }
+
+    private static DiscoveryClient eurekaFalso(int puerto) {
+        return new DiscoveryClient() {
+            @Override
+            public String description() {
+                return "Eureka falso";
+            }
+
+            @Override
+            public List<ServiceInstance> getInstances(String servicio) {
+                return List.of(new DefaultServiceInstance(
+                        servicio + "-1", servicio, "localhost", puerto, false
+                ));
+            }
+
+            @Override
+            public List<String> getServices() {
+                return List.of("inmuebles-service", "terrenos-service");
+            }
+        };
     }
 
     private static void responder(HttpExchange intercambio, String clave, String json) throws IOException {

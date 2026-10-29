@@ -17,3 +17,8 @@ gemini:
 catalogo:
   inmuebles-url: http://localhost:1
   terrenos-url: http://localhost:1
+
+# Las pruebas no se registran en Eureka
+eureka:
+  client:
+    enabled: false

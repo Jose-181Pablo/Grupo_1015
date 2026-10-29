@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suscripción | Grupo 10.15</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .page-header {
+            height: 40vh;
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding-top: var(--header-height);
+        }
+        .suscripcion-contenido {
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+        .suscripcion-mensaje {
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--accent-color);
+            background-color: white;
+            color: var(--text-primary);
+        }
+        .suscripcion-mensaje.exito {
+            border-left-color: #4E7A3A;
+        }
+        .suscripcion-mensaje.error {
+            border-left-color: #B5503C;
+        }
+        .sesion-card {
+            background-color: white;
+            padding: 2rem;
+            margin-bottom: 4rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        }
+        .sesion-card p {
+            margin-bottom: 1rem;
+        }
+        .modo-prueba {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(0,0,0,0.08);
+        }
+        .modo-prueba label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+        .modo-prueba form {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .modo-prueba input {
+            flex: 1;
+            min-width: 240px;
+            padding: 0.9rem 1rem;
+            font-family: var(--font-family);
+            font-size: 1rem;
+            border: 1px solid rgba(0,0,0,0.15);
+            background-color: var(--bg-color);
+        }
+        .planes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+        .plan-card {
+            background-color: white;
+            padding: 3rem 2rem;
+            border-top: 4px solid var(--accent-color);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            display: flex;
+            flex-direction: column;
+        }
+        .plan-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .plan-duracion {
+            color: var(--accent-color);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            margin-bottom: 0.5rem;
+        }
+        .plan-precio {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+        .plan-descripcion {
+            flex: 1;
+        }
+        button.btn {
+            font-family: var(--font-family);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .actual-card {
+            background-color: white;
+            padding: 2.5rem 2rem;
+            border-top: 4px solid var(--accent-color);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            margin-bottom: 4rem;
+        }
+        .actual-datos {
+            display: grid;
+            grid-template-columns: max-content 1fr;
+            gap: 0.6rem 2rem;
+            margin-bottom: 2rem;
+        }
+        .actual-datos dt {
+            font-weight: 600;
+        }
+        .actual-datos dd {
+            color: var(--text-secondary);
+            overflow-wrap: anywhere;
+        }
+        .suscripcion-vacio {
+            margin-bottom: 4rem;
+        }
+        .historial-tabla {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+        }
+        .historial-tabla th,
+        .historial-tabla td {
+            text-align: left;
+            padding: 0.9rem 1rem;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+        }
+        .historial-tabla th {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        .tabla-scroll {
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo"><img src="assets/images/logo.png" alt="Grupo 10.15" style="height: 150px; width: auto;"></a>
+        <nav>
+            <ul>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="conocenos.html">Conócenos</a></li>
+                <li><a href="servicios.html">Servicios</a></li>
+                <li><a href="inmobiliaria.html">Inmobiliaria</a></li>
+                <li><a href="portafolio.html">Portafolio</a></li>
+                <li><a href="contacto.html">Contacto</a></li>
+                <li><a href="suscripcion.html" class="active">Suscripción</a></li>
+            </ul>
+        </nav>
+        <div class="hamburger">
+            <div class="line1"></div>
+            <div class="line2"></div>
+            <div class="line3"></div>
+        </div>
+    </header>
+
+    <main>
+        <section class="page-header">
+            <div class="fade-up">
+                <span class="hero-subtitle" style="color:var(--accent-color); letter-spacing:0.2em;">Asistente con IA</span>
+                <h1 style="font-weight: 300;">Suscripción Premium</h1>
+            </div>
+        </section>
+
+        <section>
+            <div class="suscripcion-contenido">
+                <p id="suscripcion-mensaje" class="suscripcion-mensaje" role="status" aria-live="polite" hidden></p>
+
+                <div class="sesion-card">
+                    <div id="sesion-sin-token">
+                        <h3>Inicia sesión para suscribirte</h3>
+                        <p>Para contratar un plan o ver tu suscripción necesitas iniciar sesión con tu cuenta.</p>
+
+                        <!-- Modo de prueba: se quita cuando exista la página de inicio de sesión -->
+                        <div class="modo-prueba">
+                            <label for="campo-token">Modo de prueba: pega tu token</label>
+                            <form id="form-token">
+                                <input id="campo-token" type="text" autocomplete="off" placeholder="Token de POST /api/auth/login">
+                                <button type="submit" class="btn btn-primary">Usar token</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div id="sesion-con-token" hidden>
+                        <h3>Sesión iniciada</h3>
+                        <p>Ya puedes contratar un plan o administrar tu suscripción.</p>
+                        <button id="boton-quitar-token" type="button" class="btn">Cerrar sesión</button>
+                    </div>
+                </div>
+
+                <div class="section-header" style="margin-bottom: 2rem;">
+                    <span class="section-subtitle">Planes</span>
+                    <h2>Elige tu plan</h2>
+                    <p>Con PREMIUM puedes preguntarle al asistente con IA sobre cualquier casa o terreno del catálogo.</p>
+                </div>
+
+                <div id="planes" class="planes-grid">
+                    <p class="suscripcion-vacio">Cargando planes…</p>
+                </div>
+
+                <div id="mi-suscripcion" hidden>
+                    <div class="section-header" style="margin-bottom: 2rem;">
+                        <span class="section-subtitle">Tu cuenta</span>
+                        <h2>Mi suscripción</h2>
+                    </div>
+
+                    <div id="suscripcion-actual"></div>
+
+                    <div id="historial" hidden>
+                        <h3 style="margin-bottom: 1rem;">Historial</h3>
+                        <div class="tabla-scroll">
+                            <table class="historial-tabla">
+                                <thead>
+                                    <tr>
+                                        <th>Plan</th>
+                                        <th>Estado</th>
+                                        <th>Monto</th>
+                                        <th>Inicio</th>
+                                        <th>Fin</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="historial-cuerpo"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-col">
+                <a href="index.html" class="logo" style="margin-bottom:1rem; display:block;"><img src="assets/images/logo_vertical.png" alt="Grupo 10.15" style="height: 150px; width: auto;"></a>
+                <p>Arquitectura y Diseño en Guadalajara.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Navegación</h4>
+                <ul>
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="conocenos.html">Conócenos</a></li>
+                    <li><a href="servicios.html">Servicios</a></li>
+                    <li><a href="portafolio.html">Portafolio</a></li>
+                    <li><a href="contacto.html">Contacto</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Contacto</h4>
+                <ul>
+                    <li><a href="tel:+523325239705">+52 33 2523 9705</a></li>
+                    <li>Guadalajara, Jalisco</li>
+                </ul>
+                <h4 style="margin-top:1.5rem;">Síguenos</h4>
+                <ul>
+                    <li><a href="https://www.instagram.com/grupo_10.15" target="_blank" rel="noopener">Instagram: @grupo_10.15</a></li>
+                    <li><a href="https://www.tiktok.com/@grupo10.15" target="_blank" rel="noopener">TikTok: @grupo10.15</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>Copyright © 2026. Grupo 10.15.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="suscripcion.js"></script>
+</body>
+</html>

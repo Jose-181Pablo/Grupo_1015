@@ -19,3 +19,8 @@ autenticacion:
 # Las pruebas llaman la revisión de vencidas a mano
 suscripciones:
   revision-vencidas-ms: 86400000
+
+# Las pruebas no se registran en Eureka
+eureka:
+  client:
+    enabled: false

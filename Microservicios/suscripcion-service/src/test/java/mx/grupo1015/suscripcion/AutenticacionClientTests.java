@@ -8,6 +8,9 @@ import mx.grupo1015.suscripcion.exception.ServicioNoDisponibleException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.cloud.client.DefaultServiceInstance;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -140,6 +143,38 @@ class AutenticacionClientTests {
 
         assertThat(logins.get()).isEqualTo(2);
         assertThat(cambiosDePlan).last().asString().contains("Bearer admin-2");
+    }
+
+    @Test
+    void usaLaDireccionQueDaEureka() {
+        int puerto = servidor.getAddress().getPort();
+        DiscoveryClient eureka = new DiscoveryClient() {
+            @Override
+            public String description() {
+                return "Eureka falso";
+            }
+
+            @Override
+            public List<ServiceInstance> getInstances(String servicio) {
+                return List.of(new DefaultServiceInstance(
+                        servicio + "-1", servicio, "localhost", puerto, false
+                ));
+            }
+
+            @Override
+            public List<String> getServices() {
+                return List.of("autenticacion");
+            }
+        };
+
+        // La URL fija no responde: solo funciona si usa la dirección de Eureka
+        AutenticacionClient conEureka = new AutenticacionClient(
+                "http://localhost:1", "servicio@grupo1015.com", "secreto", Optional.of(eureka)
+        );
+
+        assertThat(conEureka.validar("Bearer token-maria")).isPresent();
+        conEureka.cambiarPlan(2L, "PREMIUM");
+        assertThat(cambiosDePlan).hasSize(1);
     }
 
     private AutenticacionClient crearCliente(String url) {

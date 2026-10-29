@@ -31,6 +31,7 @@ services:
       DB_URL: jdbc:mariadb://suscripcion-db:3306/suscripcion_db
       DB_USERNAME: suscripcion_user
       DB_PASSWORD: ${DB_PASSWORD}
+      EUREKA_URL: ${EUREKA_URL:-http://eureka-server:8761/eureka/}
       AUTENTICACION_URL: ${AUTENTICACION_URL:-http://autenticacion:8082}
       AUTENTICACION_CORREO: ${AUTENTICACION_CORREO}
       AUTENTICACION_PASSWORD: ${AUTENTICACION_PASSWORD}
