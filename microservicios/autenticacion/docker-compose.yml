@@ -41,6 +41,8 @@ services:
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
       # Dentro de la red "grupo1015" el microservicio usuario se llama "usuario"
       SERVICIOS_USUARIO_URL: http://usuario:8081
+      # Eureka compartido del equipo (contenedor eureka-server en la red grupo1015)
+      EUREKA_URL: http://eureka-server:8761/eureka/
     depends_on:
       autenticacion-db:
         condition: service_healthy   # espera a que MariaDB este lista

@@ -32,6 +32,8 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mariadb://usuario-db:3306/${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
+      # Eureka compartido del equipo (contenedor eureka-server en la red grupo1015)
+      EUREKA_URL: http://eureka-server:8761/eureka/
     depends_on:
       usuario-db:
         condition: service_healthy   # espera a que MariaDB este lista
