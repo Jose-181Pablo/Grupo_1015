@@ -1,0 +1,233 @@
+/* Paleta neutra y estilo minimalista */
+:root {
+    --fondo: #f5f4f2;
+    --tarjeta: #ffffff;
+    --texto: #2b2a28;
+    --texto-suave: #77736d;
+    --borde: #dedad4;
+    --principal: #3f3d3a;
+    --principal-hover: #262523;
+    --error-fondo: #f6ecea;
+    --error-texto: #8a3b32;
+    --exito-fondo: #edf0ea;
+    --exito-texto: #3f5a36;
+    --radio: 10px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--fondo);
+    color: var(--texto);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.5;
+}
+
+/* Encabezado */
+.encabezado {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--borde);
+}
+
+.marca {
+    color: var(--texto);
+    text-decoration: none;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.etiqueta-rol {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    padding: 4px 10px;
+    border: 1px solid var(--borde);
+    border-radius: 999px;
+    color: var(--texto-suave);
+}
+
+/* Contenido */
+.contenedor {
+    display: flex;
+    justify-content: center;
+    padding: 48px 16px;
+}
+
+.tarjeta {
+    width: 100%;
+    max-width: 420px;
+    background: var(--tarjeta);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio);
+    padding: 32px 28px;
+}
+
+h1 {
+    margin: 0 0 4px;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.texto-suave {
+    margin: 0 0 20px;
+    color: var(--texto-suave);
+    font-size: 14px;
+}
+
+/* Pestañas Crear cuenta / Iniciar sesión */
+.pestanas {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--borde);
+}
+
+.pestana {
+    flex: 1;
+    padding: 10px 0;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--texto-suave);
+    font: inherit;
+    cursor: pointer;
+}
+
+.pestana.activa {
+    color: var(--texto);
+    border-bottom-color: var(--principal);
+}
+
+/* Formularios */
+.formulario {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.fila {
+    display: flex;
+    gap: 12px;
+}
+
+.fila label {
+    flex: 1;
+}
+
+label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--texto-suave);
+}
+
+input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    background: var(--tarjeta);
+    color: var(--texto);
+    font: inherit;
+    font-size: 15px;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--principal);
+}
+
+/* Botones */
+.boton {
+    display: inline-block;
+    padding: 11px 16px;
+    border: 1px solid var(--principal);
+    border-radius: 8px;
+    background: var(--principal);
+    color: #ffffff;
+    font: inherit;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.boton:hover {
+    background: var(--principal-hover);
+}
+
+.boton:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.boton-secundario {
+    background: transparent;
+    color: var(--principal);
+}
+
+.boton-secundario:hover {
+    background: var(--fondo);
+}
+
+.enlace {
+    display: block;
+    margin: 18px auto 0;
+    background: none;
+    border: none;
+    color: var(--texto-suave);
+    font: inherit;
+    font-size: 14px;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.acciones {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+.acciones .boton {
+    flex: 1;
+}
+
+/* Mensajes de error y de éxito */
+.mensaje {
+    margin: 16px 0 0;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.mensaje.error {
+    background: var(--error-fondo);
+    color: var(--error-texto);
+}
+
+.mensaje.exito {
+    background: var(--exito-fondo);
+    color: var(--exito-texto);
+}
+
+.oculto {
+    display: none;
+}
+
+/* Pantallas pequeñas (celular) */
+@media (max-width: 480px) {
+    .fila,
+    .acciones {
+        flex-direction: column;
+    }
+
+    .tarjeta {
+        padding: 24px 18px;
+    }
+}
