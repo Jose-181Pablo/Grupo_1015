@@ -72,6 +72,9 @@ services:
       DB_USER: postgres
       DB_PASSWORD: postgres
       EUREKA_URL: http://eureka-server:8761/eureka/
+      OFERTAS_URL: http://host.docker.internal:8087/api/ofertas
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       postgres-terrenos:
         condition: service_healthy
