@@ -1,7 +1,11 @@
 # Levanta todo con:  docker compose up -d --build
 # Apaga todo con:    docker compose down        (agrega -v para borrar también las bases de datos)
 #
-# Puertos asignados por el equipo: 8761 Eureka · 8083 inmuebles (catálogo) · 8084 terrenos
+# Eureka ya NO se levanta aquí: se usa el Eureka compartido del equipo
+# (rama aldo, Microservicios/eureka-server). Levántalo primero para que los servicios se registren.
+# Todos los compose del equipo usan la red "grupo1015", así se encuentran por nombre.
+#
+# Puertos asignados por el equipo: 8761 Eureka (compartido) · 8083 inmuebles (catálogo) · 8084 terrenos
 # Cada microservicio tiene SU PROPIA base de datos.
 services:
 
@@ -39,12 +43,6 @@ services:
       timeout: 5s
       retries: 10
 
-  eureka-server:
-    build: ./eureka-server
-    container_name: eureka-server
-    ports:
-      - "8761:8761"
-
   inmuebles-service:
     build: ./inmuebles-service
     container_name: inmuebles-service
@@ -59,8 +57,6 @@ services:
     depends_on:
       postgres-inmuebles:
         condition: service_healthy
-      eureka-server:
-        condition: service_started
 
   terrenos-service:
     build: ./terrenos-service
@@ -78,9 +74,12 @@ services:
     depends_on:
       postgres-terrenos:
         condition: service_healthy
-      eureka-server:
-        condition: service_started
 
 volumes:
   datos-inmuebles:
   datos-terrenos:
+
+# Red compartida con los demás microservicios del equipo (Eureka, gateway, chat, usuario...)
+networks:
+  default:
+    name: grupo1015
