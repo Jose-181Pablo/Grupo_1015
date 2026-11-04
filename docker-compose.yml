@@ -24,6 +24,7 @@ services:
     container_name: microservicio-citas
     environment:
       DB_URL: jdbc:mariadb://mariadb:3306/citas_db
+      EUREKA_URL: http://eureka-server:8761/eureka/
       DB_USER: grupo1015
       DB_PASSWORD: ${DB_PASSWORD:-grupo1015}
     ports:
@@ -37,6 +38,7 @@ services:
     container_name: microservicio-ofertas
     environment:
       DB_URL: jdbc:mariadb://mariadb:3306/ofertas_db
+      EUREKA_URL: http://eureka-server:8761/eureka/
       DB_USER: grupo1015
       DB_PASSWORD: ${DB_PASSWORD:-grupo1015}
     ports:
@@ -47,3 +49,7 @@ services:
 
 volumes:
   mariadb_data:
+
+networks:
+  default:
+    name: grupo1015
