@@ -19,12 +19,12 @@ public class CitaController {
     private final CitaService service;
 
     @GetMapping
-    public List<Cita> listar(@RequestParam(required = false) EstadoCita estado) {
+    public List<Cita> listar(@RequestParam(name = "estado", required = false) EstadoCita estado) {
         return estado == null ? service.listar() : service.listarPorEstado(estado);
     }
 
     @GetMapping("/{id}")
-    public Cita obtener(@PathVariable Long id) {
+    public Cita obtener(@PathVariable("id") Long id) {
         return service.obtener(id);
     }
 
@@ -34,12 +34,13 @@ public class CitaController {
     }
 
     @PatchMapping("/{id}/estado")
-    public Cita cambiarEstado(@PathVariable Long id, @RequestParam EstadoCita estado) {
+    public Cita cambiarEstado(@PathVariable("id") Long id,
+                              @RequestParam(name = "estado") EstadoCita estado) {
         return service.cambiarEstado(id, estado);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> borrar(@PathVariable Long id) {
+    public ResponseEntity<Void> borrar(@PathVariable("id") Long id) {
         service.borrar(id);
         return ResponseEntity.noContent().build();
     }

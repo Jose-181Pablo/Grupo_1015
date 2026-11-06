@@ -19,13 +19,13 @@ public class OfertaController {
     private final OfertaService service;
 
     @GetMapping
-    public List<Oferta> listar(@RequestParam(required = false) TipoPublicacion tipo,
-                               @RequestParam(required = false) String propiedad) {
+    public List<Oferta> listar(@RequestParam(name = "tipo", required = false) TipoPublicacion tipo,
+                               @RequestParam(name = "propiedad", required = false) String propiedad) {
         return service.listar(tipo, propiedad);
     }
 
     @GetMapping("/{id}")
-    public Oferta obtener(@PathVariable Long id) {
+    public Oferta obtener(@PathVariable("id") Long id) {
         return service.obtener(id);
     }
 
@@ -35,17 +35,17 @@ public class OfertaController {
     }
 
     @PutMapping("/{id}")
-    public Oferta actualizar(@PathVariable Long id, @Valid @RequestBody Oferta oferta) {
+    public Oferta actualizar(@PathVariable("id") Long id, @Valid @RequestBody Oferta oferta) {
         return service.actualizar(id, oferta);
     }
 
     @PatchMapping("/{id}/desactivar")
-    public Oferta desactivar(@PathVariable Long id) {
+    public Oferta desactivar(@PathVariable("id") Long id) {
         return service.desactivar(id);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> borrar(@PathVariable Long id) {
+    public ResponseEntity<Void> borrar(@PathVariable("id") Long id) {
         service.borrar(id);
         return ResponseEntity.noContent().build();
     }
