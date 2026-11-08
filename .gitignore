@@ -88,3 +88,6 @@ logs/
 
 Thumbs.db
 Desktop.ini
+*.mov
+out/
+.DS_Store
