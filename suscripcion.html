@@ -47,6 +47,12 @@
             padding-top: 1.5rem;
             border-top: 1px solid rgba(0,0,0,0.08);
         }
+        .modo-prueba summary {
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
         .modo-prueba label {
             display: block;
             font-size: 0.85rem;
@@ -193,14 +199,18 @@
                         <h3>Inicia sesión para suscribirte</h3>
                         <p>Para contratar un plan o ver tu suscripción necesitas iniciar sesión con tu cuenta.</p>
 
-                        <!-- Modo de prueba: se quita cuando exista la página de inicio de sesión -->
-                        <div class="modo-prueba">
-                            <label for="campo-token">Modo de prueba: pega tu token</label>
+                        <!-- La página de inicio de sesión es de Liz (login.html); guarda el token en grupo1015_token -->
+                        <a href="login.html" class="btn btn-primary">Iniciar sesión</a>
+
+                        <!-- Modo de prueba (Postman): queda escondido, solo para probar sin la página de login -->
+                        <details class="modo-prueba">
+                            <summary>Modo de prueba: pegar un token</summary>
+                            <label for="campo-token">Token de POST /api/auth/login</label>
                             <form id="form-token">
                                 <input id="campo-token" type="text" autocomplete="off" placeholder="Token de POST /api/auth/login">
                                 <button type="submit" class="btn btn-primary">Usar token</button>
                             </form>
-                        </div>
+                        </details>
                     </div>
 
                     <div id="sesion-con-token" hidden>
