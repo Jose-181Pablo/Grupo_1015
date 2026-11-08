@@ -172,7 +172,7 @@ Las pruebas usan una base H2 en memoria (perfil `test`) y simulan Gemini, así q
 
 ## Postman
 
-La colección `postman/chat-ia-service.postman_collection.json` trae todas las peticiones. Impórtala en Postman y ejecútalas en orden: "Crear conversación" guarda el id en la variable `conversacionId` que usan las demás.
+La colección `/postman/chat-ia-service.postman_collection.json` (raíz del repositorio) trae todas las peticiones. Impórtala en Postman y ejecútalas en orden: "Crear conversación" guarda el id en la variable `conversacionId` que usan las demás.
 
 ## Base de datos
 

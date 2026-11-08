@@ -1,0 +1,47 @@
+# Pablo: microservicio de terrenos + su base de datos PostgreSQL.
+# Solo este servicio:   docker compose up -d --build
+# Todo el equipo:       desde la carpeta Microservicios, docker compose up -d --build
+# Apagar:               docker compose down   (agrega -v para borrar también la base de datos)
+# Eureka es el compartido del equipo (Microservicios/eureka-server): enciéndelo primero.
+services:
+
+  postgres-terrenos:
+    image: postgres:17
+    container_name: postgres-terrenos
+    environment:
+      POSTGRES_DB: terrenos_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"   # 5434 en tu compu
+    volumes:
+      - datos-terrenos:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d terrenos_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  terrenos-service:
+    build: .
+    container_name: terrenos-service
+    ports:
+      - "8084:8084"
+    environment:
+      DB_URL: jdbc:postgresql://postgres-terrenos:5432/terrenos_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      EUREKA_URL: http://eureka-server:8761/eureka/
+      OFERTAS_URL: http://host.docker.internal:8087/api/ofertas
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      postgres-terrenos:
+        condition: service_healthy
+
+volumes:
+  datos-terrenos:
+
+networks:
+  default:
+    name: grupo1015

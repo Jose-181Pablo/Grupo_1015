@@ -1,19 +1,25 @@
-# Rama completo: levanta Eureka, el API Gateway y TODOS los microservicios del equipo con un solo comando:
+# Rama completo: levanta Eureka, el API Gateway y TODOS los microservicios del equipo con un solo comando
+# (desde esta carpeta, Microservicios):
 #   docker compose up -d --build
-# Cada microservicio sigue teniendo su propio docker-compose.yml en su carpeta;
+#   docker compose down
+# Cada microservicio tiene su propio docker-compose.yml en su carpeta (con su base de datos);
 # este archivo solo los incluye, así que cualquier cambio en ellos se toma aquí.
 #
 # Usa una sola forma a la vez: si los levantaste por separado, apágalos con
 # "docker compose down" en su carpeta antes de usar este archivo (y al revés).
 include:
+  # Infraestructura
   - eureka-server/docker-compose.yml
   - api-gateway/docker-compose.yml
+  # Aldo: chat con IA (8085) y suscripciones (8088)
   - chat-ia-service/docker-compose.yml
   - suscripcion-service/docker-compose.yml
-  # Liz: usuario (8081) y autenticación (8082). Sus contraseñas van en el .env de cada carpeta.
+  # Liz: usuario (8081) y autenticación (8082)
   - usuario/docker-compose.yml
   - autenticacion/docker-compose.yml
-  # Pablo: inmuebles (8083) y terrenos (8084) con sus PostgreSQL
-  - ../inmobiliaria-backend/docker-compose.yml
-  # Génesis: citas (8086) y ofertas (8087) con su MariaDB
-  - ../docker-compose.yml
+  # Pablo: inmuebles (8083) y terrenos (8084)
+  - inmuebles-service/docker-compose.yml
+  - terrenos-service/docker-compose.yml
+  # Génesis: citas (8086) y ofertas (8087)
+  - microservicio-citas/docker-compose.yml
+  - microservicio-ofertas/docker-compose.yml

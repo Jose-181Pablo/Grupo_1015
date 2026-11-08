@@ -1,0 +1,46 @@
+# Pablo: microservicio de inmuebles (casas) + su base de datos PostgreSQL.
+# Solo este servicio:   docker compose up -d --build
+# Todo el equipo:       desde la carpeta Microservicios, docker compose up -d --build
+# Apagar:               docker compose down   (agrega -v para borrar también la base de datos)
+# Eureka es el compartido del equipo (Microservicios/eureka-server): enciéndelo primero.
+services:
+
+  postgres-inmuebles:
+    image: postgres:17
+    container_name: postgres-inmuebles
+    environment:
+      POSTGRES_DB: inmuebles_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"   # 5433 en tu compu, para no chocar con un PostgreSQL instalado en Windows
+    volumes:
+      - datos-inmuebles:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d inmuebles_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  inmuebles-service:
+    build: .
+    container_name: inmuebles-service
+    ports:
+      - "8083:8083"
+    environment:
+      # Dentro de Docker los contenedores se encuentran por su nombre, no por "localhost"
+      DB_URL: jdbc:postgresql://postgres-inmuebles:5432/inmuebles_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      EUREKA_URL: http://eureka-server:8761/eureka/
+    depends_on:
+      postgres-inmuebles:
+        condition: service_healthy
+
+volumes:
+  datos-inmuebles:
+
+# Red compartida con los demás microservicios del equipo
+networks:
+  default:
+    name: grupo1015

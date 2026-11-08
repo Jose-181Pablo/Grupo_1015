@@ -186,7 +186,7 @@ Las pruebas usan una base H2 en memoria (perfil `test`) y simulan el microservic
 
 ## Postman
 
-La colección `postman/suscripcion-service.postman_collection.json` trae todas las peticiones. Impórtala en Postman, cambia el correo y la contraseña de "Iniciar sesión" por los de una cuenta registrada y ejecútalas en orden: esa petición guarda el token en la variable `token` que usan las demás.
+La colección `/postman/suscripcion-service.postman_collection.json` (raíz del repositorio) trae todas las peticiones. Impórtala en Postman, cambia el correo y la contraseña de "Iniciar sesión" por los de una cuenta registrada y ejecútalas en orden: esa petición guarda el token en la variable `token` que usan las demás.
 
 ## Base de datos
 

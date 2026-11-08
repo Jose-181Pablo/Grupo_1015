@@ -198,7 +198,7 @@ Para cancelar la suscripción: el mismo endpoint con `{ "plan": "ESTANDAR" }`.
 | `PUT /api/auth/admin/cuentas/{id}/rol` | ADMIN | `{rol}` | 200, 400, 401, 403, 404, 409 |
 
 Todos los errores tienen la forma `{"error": "mensaje"}`.
-La colección de Postman con todos los casos está en `postman/autenticacion.postman_collection.json`.
+La colección de Postman con todos los casos está en `/postman/autenticacion.postman_collection.json` (raíz del repositorio).
 
 ---
 

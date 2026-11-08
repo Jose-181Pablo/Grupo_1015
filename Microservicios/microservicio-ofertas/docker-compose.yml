@@ -1,0 +1,50 @@
+# Génesis: microservicio de ofertas y remates + su propia base de datos MariaDB.
+# Solo este servicio:   docker compose up -d --build
+# Todo el equipo:       desde la carpeta Microservicios, docker compose up -d --build
+# Apagar:               docker compose down   (agrega -v para borrar también la base de datos)
+# Las contraseñas se leen del archivo .env de esta carpeta.
+services:
+
+  ofertas-db:
+    image: mariadb:lts
+    container_name: ofertas-db
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root1015}
+      MARIADB_DATABASE: ofertas_db
+      MARIADB_USER: grupo1015
+      MARIADB_PASSWORD: ${DB_PASSWORD:-grupo1015}
+    ports:
+      - "3312:3306"
+    volumes:
+      - ofertas_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  microservicio-ofertas:
+    build: .
+    container_name: microservicio-ofertas
+    environment:
+      DB_URL: jdbc:mariadb://ofertas-db:3306/ofertas_db
+      EUREKA_URL: http://eureka-server:8761/eureka/
+      DB_USER: grupo1015
+      DB_PASSWORD: ${DB_PASSWORD:-grupo1015}
+      # Para revisar que quien crea/modifica ofertas sea ADMIN (microservicio autenticacion).
+      # Primero se busca en Eureka; esta URL es el respaldo.
+      AUTENTICACION_URL: ${AUTENTICACION_URL:-http://host.docker.internal:8082}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "8087:8087"
+    depends_on:
+      ofertas-db:
+        condition: service_healthy
+
+volumes:
+  ofertas_data:
+
+networks:
+  default:
+    name: grupo1015

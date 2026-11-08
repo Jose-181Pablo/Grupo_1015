@@ -1,0 +1,45 @@
+# Génesis: microservicio de citas + su propia base de datos MariaDB.
+# Solo este servicio:   docker compose up -d --build
+# Todo el equipo:       desde la carpeta Microservicios, docker compose up -d --build
+# Apagar:               docker compose down   (agrega -v para borrar también la base de datos)
+# Las contraseñas se leen del archivo .env de esta carpeta.
+services:
+
+  citas-db:
+    image: mariadb:lts
+    container_name: citas-db
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root1015}
+      MARIADB_DATABASE: citas_db
+      MARIADB_USER: grupo1015
+      MARIADB_PASSWORD: ${DB_PASSWORD:-grupo1015}
+    ports:
+      - "3307:3306"
+    volumes:
+      - citas_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  microservicio-citas:
+    build: .
+    container_name: microservicio-citas
+    environment:
+      DB_URL: jdbc:mariadb://citas-db:3306/citas_db
+      EUREKA_URL: http://eureka-server:8761/eureka/
+      DB_USER: grupo1015
+      DB_PASSWORD: ${DB_PASSWORD:-grupo1015}
+    ports:
+      - "8086:8086"
+    depends_on:
+      citas-db:
+        condition: service_healthy
+
+volumes:
+  citas_data:
+
+networks:
+  default:
+    name: grupo1015
