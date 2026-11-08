@@ -41,6 +41,11 @@ services:
       EUREKA_URL: http://eureka-server:8761/eureka/
       DB_USER: grupo1015
       DB_PASSWORD: ${DB_PASSWORD:-grupo1015}
+      # Para revisar que quien crea/modifica ofertas sea ADMIN (microservicio autenticacion).
+      # Primero se busca en Eureka; esta URL es el respaldo.
+      AUTENTICACION_URL: ${AUTENTICACION_URL:-http://host.docker.internal:8082}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - "8087:8087"
     depends_on:

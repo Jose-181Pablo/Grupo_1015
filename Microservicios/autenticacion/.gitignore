@@ -32,17 +32,14 @@ build/
 ### VS Code ###
 .vscode/
 
-### Variables con contrasenas (no subir) ###
-.env
 
 ### ============================================================
 ### INFORMACION SENSIBLE: nunca se sube a GitHub
 ### ============================================================
 
-# Variables con contrasenas, claves de JWT y datos del ADMIN
-.env
-.env.*
-!.env.example
+# Los .env si se suben (repositorio privado, regla del equipo);
+# solo la clave de Gemini se queda local.
+gemini.env
 
 # Llaves, certificados privados y almacenes de claves
 *.pem

@@ -119,6 +119,95 @@
             background-color: #f0efec;
             color: var(--text-secondary);
         }
+        .admin-titulo {
+            font-weight: 300;
+            font-size: 1.8rem;
+            margin: 0 0 1.5rem;
+        }
+        .admin-seccion + .admin-seccion {
+            margin-top: 4rem;
+        }
+        .oferta-form {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1.25rem 1.5rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            background-color: white;
+        }
+        .oferta-form h3 {
+            grid-column: 1 / -1;
+            margin: 0;
+            font-weight: 400;
+        }
+        .oferta-form label {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+        .oferta-form .completo { grid-column: 1 / -1; }
+        .oferta-form input,
+        .oferta-form select,
+        .oferta-form textarea {
+            padding: 0.75rem 1rem;
+            border: 1px solid rgba(0,0,0,0.15);
+            background-color: var(--bg-color);
+            font-family: var(--font-family);
+            font-size: 1rem;
+            text-transform: none;
+            letter-spacing: normal;
+            color: inherit;
+        }
+        .oferta-form textarea { resize: vertical; min-height: 90px; }
+        .oferta-ayuda {
+            font-size: 0.8rem;
+            font-weight: 400;
+            letter-spacing: normal;
+            text-transform: none;
+            color: var(--accent-color);
+        }
+        .oferta-botones {
+            grid-column: 1 / -1;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .oferta-botones .btn { font-family: var(--font-family); }
+        .oferta-botones [hidden] { display: none; }
+        .admin-tipo {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            background-color: #fbf0dc;
+            color: #7a5414;
+        }
+        .admin-tipo.remate {
+            background-color: #f6e1dc;
+            color: #8a3423;
+        }
+        .admin-tabla s { color: var(--text-secondary); font-size: 0.85rem; }
+        .admin-acciones { white-space: nowrap; }
+        .admin-accion {
+            padding: 0.4rem 0.7rem;
+            margin-right: 0.4rem;
+            border: 1px solid rgba(0,0,0,0.15);
+            background-color: var(--bg-color);
+            font-family: var(--font-family);
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        .admin-accion:hover { border-color: var(--accent-color); }
+        .admin-accion.peligro { color: #B5503C; }
+        @media (max-width: 700px) {
+            .oferta-form { grid-template-columns: 1fr; padding: 1.25rem; }
+        }
         .admin-yo {
             font-size: 0.75rem;
             color: var(--accent-color);
@@ -166,6 +255,8 @@
 
                 <!-- Solo para ADMIN: lo mismo que la colección de Postman de autenticación -->
                 <div id="admin-panel" hidden>
+                    <div class="admin-seccion">
+                    <h2 class="admin-titulo">Cuentas</h2>
                     <p id="admin-mensaje" class="admin-mensaje" role="status" aria-live="polite" hidden></p>
 
                     <div class="admin-resumen">
@@ -194,6 +285,73 @@
                             <tbody id="admin-cuentas">
                             </tbody>
                         </table>
+                    </div>
+                    </div>
+
+                    <!-- Ofertas y remates: microservicio de ofertas (solo ADMIN puede crear o modificar) -->
+                    <div class="admin-seccion" id="admin-ofertas">
+                        <h2 class="admin-titulo">Ofertas y remates</h2>
+                        <p id="oferta-mensaje" class="admin-mensaje" role="status" aria-live="polite" hidden></p>
+
+                        <div class="admin-resumen">
+                            <div class="admin-dato"><span>Ofertas activas</span><strong id="dato-ofertas">0</strong></div>
+                            <div class="admin-dato"><span>Remates activos</span><strong id="dato-remates">0</strong></div>
+                        </div>
+
+                        <form id="oferta-form" class="oferta-form">
+                            <h3 id="oferta-form-titulo">Nueva oferta o remate</h3>
+                            <label>Inmueble
+                                <select name="propiedad" required>
+                                    <option value="">Selecciona un inmueble</option>
+                                </select>
+                                <span id="oferta-precio-ayuda" class="oferta-ayuda"></span>
+                            </label>
+                            <label>Tipo
+                                <select name="tipo" required>
+                                    <option value="OFERTA">Oferta</option>
+                                    <option value="REMATE">Remate</option>
+                                </select>
+                            </label>
+                            <label class="completo">Título
+                                <input name="titulo" type="text" maxlength="255" required placeholder="Ej. Casa 65 en oferta">
+                            </label>
+                            <label class="completo">Descripción
+                                <textarea name="descripcion" maxlength="1000" placeholder="Lo que verá el cliente en la página y lo que usará el asistente virtual"></textarea>
+                            </label>
+                            <label>Precio original (MXN)
+                                <input name="precioOriginal" type="number" min="1" step="1" required>
+                            </label>
+                            <label>Precio final (MXN)
+                                <input name="precioFinal" type="number" min="1" step="1" required>
+                            </label>
+                            <label>Vigente desde
+                                <input name="fechaInicio" type="date">
+                            </label>
+                            <label>Vigente hasta
+                                <input name="fechaFin" type="date">
+                            </label>
+                            <div class="oferta-botones">
+                                <button id="oferta-guardar" type="submit" class="btn btn-primary">Publicar</button>
+                                <button id="oferta-cancelar" type="button" class="btn" hidden>Cancelar edición</button>
+                            </div>
+                        </form>
+
+                        <div class="admin-tabla-scroll">
+                            <table class="admin-tabla">
+                                <thead>
+                                    <tr>
+                                        <th>Inmueble</th>
+                                        <th>Tipo</th>
+                                        <th>Título</th>
+                                        <th>Precio</th>
+                                        <th>Vigencia</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ofertas-lista">
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -236,6 +394,7 @@
 
     <script src="script.js"></script>
     <script src="admin.js"></script>
+    <script src="admin-ofertas.js"></script>
 
     <!-- Ventana flotante de inicio de sesión (microservicio autenticacion) -->
     <script src="sesion.js"></script>

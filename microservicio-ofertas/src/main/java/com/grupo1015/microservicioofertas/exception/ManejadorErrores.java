@@ -29,4 +29,20 @@ public class ManejadorErrores {
                 .forEach(f -> errores.put(f.getField(), f.getDefaultMessage()));
         return ResponseEntity.badRequest().body(errores);
     }
+
+    // Ofertas protegidas: crear, editar, desactivar y borrar solo con cuenta ADMIN
+    @ExceptionHandler(NoAutorizadoException.class)
+    public ResponseEntity<Map<String, String>> noAutorizado(NoAutorizadoException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", e.getMessage()));
+    }
+
+    @ExceptionHandler(SinPermisoException.class)
+    public ResponseEntity<Map<String, String>> sinPermiso(SinPermisoException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", e.getMessage()));
+    }
+
+    @ExceptionHandler(ServicioNoDisponibleException.class)
+    public ResponseEntity<Map<String, String>> noDisponible(ServicioNoDisponibleException e) {
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(Map.of("error", e.getMessage()));
+    }
 }
