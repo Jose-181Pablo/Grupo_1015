@@ -454,3 +454,21 @@ footer {
   opacity: 1;
   transform: translateX(0);
 }
+
+/* Enlace "Iniciar sesión" de la barra de navegación (lleva a login.html) */
+nav a.nav-login {
+  padding: 0.45rem 1.1rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+nav a.nav-login::after {
+  display: none; /* sin la línea inferior de los demás enlaces */
+}
+
+nav a.nav-login:hover {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+  color: var(--text-light);
+}

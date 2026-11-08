@@ -1,0 +1,233 @@
+/* login.css: estilos solo para login.html.
+   Usa la tipografía de Grupo 10.15 (Outfit) con colores neutros. */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap');
+
+:root {
+    --login-fondo: #F4F3F1;      /* gris muy claro */
+    --login-tarjeta: #FFFFFF;    /* blanco */
+    --login-texto: #2E302C;      /* gris oscuro */
+    --login-suave: #7A7C76;      /* gris medio */
+    --login-borde: #DCDAD5;      /* gris suave para bordes */
+    --login-acento: #8A9872;     /* verde salvia del logo, solo en detalles */
+    --login-boton: #22261F;      /* mismo tono oscuro del encabezado del sitio */
+    --login-error-fondo: #F6ECEA;
+    --login-error-texto: #8A3B32;
+    --login-exito-fondo: #EDF0EA;
+    --login-exito-texto: #3F5A36;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Outfit', sans-serif;
+    background: var(--login-fondo);
+    color: var(--login-texto);
+}
+
+a {
+    color: inherit;
+}
+
+/* Barra superior */
+.login-barra {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100px;
+    padding: 0 5%;
+}
+
+.login-logo img {
+    height: 150px; /* mismo tamaño que en la página principal */
+    width: auto;
+    display: block;
+}
+
+.login-volver {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    color: var(--login-suave);
+    transition: color 0.3s ease;
+}
+
+.login-volver:hover {
+    color: var(--login-texto);
+}
+
+/* Contenido centrado */
+.login-contenedor {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 16px 3rem;
+}
+
+.login-tarjeta {
+    width: 100%;
+    max-width: 420px;
+    background: var(--login-tarjeta);
+    border: 1px solid var(--login-borde);
+    border-radius: 12px;
+    padding: 2.5rem 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+}
+
+.login-subtitulo {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: var(--login-acento);
+    margin-bottom: 0.5rem;
+}
+
+.login-tarjeta h1 {
+    font-size: 1.8rem;
+    font-weight: 300;
+    margin-bottom: 0.5rem;
+}
+
+.login-texto {
+    color: var(--login-suave);
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+}
+
+/* Formulario */
+.login-formulario {
+    display: flex;
+    flex-direction: column;
+}
+
+.login-formulario label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.4rem;
+}
+
+.login-formulario input {
+    font: inherit;
+    font-size: 1rem;
+    padding: 0.8rem 0.9rem;
+    margin-bottom: 1.2rem;
+    border: 1px solid var(--login-borde);
+    border-radius: 8px;
+    background: #FAFAF9;
+    color: var(--login-texto);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-formulario input:focus {
+    outline: none;
+    border-color: var(--login-acento);
+    box-shadow: 0 0 0 3px rgba(138, 152, 114, 0.18);
+    background: #FFFFFF;
+}
+
+.login-boton {
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0.95rem;
+    margin-top: 0.4rem;
+    border: none;
+    border-radius: 8px;
+    background: var(--login-boton);
+    color: #F9F8F6;
+    cursor: pointer;
+    transition: background 0.3s ease, opacity 0.3s ease;
+}
+
+.login-boton:hover {
+    background: #3A4035;
+}
+
+.login-boton:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+/* Mensajes */
+.login-mensaje {
+    font-size: 0.9rem;
+    padding: 0.75rem 0.9rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.login-mensaje.error {
+    background: var(--login-error-fondo);
+    color: var(--login-error-texto);
+}
+
+.login-mensaje.exito {
+    background: var(--login-exito-fondo);
+    color: var(--login-exito-texto);
+}
+
+.oculto {
+    display: none;
+}
+
+/* Enlaces inferiores */
+.login-registro {
+    margin-top: 1.8rem;
+    text-align: center;
+    font-size: 0.95rem;
+    color: var(--login-suave);
+}
+
+.login-registro a {
+    color: var(--login-texto);
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid var(--login-acento);
+}
+
+.login-volver-abajo {
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--login-suave);
+    text-decoration: none;
+}
+
+.login-volver-abajo:hover {
+    color: var(--login-texto);
+    text-decoration: underline;
+}
+
+/* Celulares */
+@media screen and (max-width: 480px) {
+    .login-logo img {
+        height: 120px;
+    }
+
+    .login-volver {
+        display: none; /* abajo ya está "Regresar a la página principal" */
+    }
+
+    .login-tarjeta {
+        padding: 2rem 1.4rem;
+    }
+
+    .login-tarjeta h1 {
+        font-size: 1.5rem;
+    }
+}

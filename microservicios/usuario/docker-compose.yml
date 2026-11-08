@@ -1,0 +1,47 @@
+# Microservicio usuario + su base de datos (MariaDB) en Docker.
+# Las contrasenas se leen del archivo .env (ver .env.example).
+# Levantar todo:      docker compose up -d --build
+# Solo la BD:         docker compose up -d usuario-db
+# Apagar:             docker compose down
+services:
+  usuario-db:
+    image: mariadb:11.4
+    container_name: usuario-db
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${DB_NAME}
+      MARIADB_USER: ${DB_USER}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "127.0.0.1:3308:3306"   # solo accesible desde tu PC (3308 -> 3306 del contenedor)
+    volumes:
+      - usuario-db-data:/var/lib/mysql   # los datos no se pierden al apagar
+    healthcheck:   # indica cuando MariaDB ya acepta conexiones
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  usuario:
+    build: .
+    container_name: usuario
+    ports:
+      - "8081:8081"
+    environment:
+      # Dentro de Docker la BD se llama "usuario-db" y usa el puerto 3306
+      SPRING_DATASOURCE_URL: jdbc:mariadb://usuario-db:3306/${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      # Eureka compartido del equipo (contenedor eureka-server en la red grupo1015)
+      EUREKA_URL: http://eureka-server:8761/eureka/
+    depends_on:
+      usuario-db:
+        condition: service_healthy   # espera a que MariaDB este lista
+
+volumes:
+  usuario-db-data:
+
+# Red compartida con los demas microservicios (autenticacion llama a "usuario" por aqui)
+networks:
+  default:
+    name: grupo1015
