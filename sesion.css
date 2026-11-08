@@ -1,0 +1,320 @@
+/* sesion.css: ventana flotante para iniciar sesión desde cualquier página.
+   Usa los colores de styles.css (variables de :root). */
+
+.sesion-fondo {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background-color: rgba(34, 38, 31, 0.55);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.sesion-fondo[hidden] {
+  display: none;
+}
+
+.sesion-fondo.visible {
+  opacity: 1;
+}
+
+body.sesion-abierta {
+  overflow: hidden; /* la página de atrás no se mueve */
+}
+
+.sesion-ventana {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  padding: 2.5rem 2rem 2rem;
+  background-color: var(--bg-color, #F9F8F6);
+  color: var(--text-primary, #384232);
+  font-family: var(--font-family, 'Outfit', sans-serif);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  transform: translateY(12px);
+  transition: transform 0.25s ease;
+}
+
+.sesion-fondo.visible .sesion-ventana {
+  transform: translateY(0);
+}
+
+.sesion-cerrar {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary, #5A6354);
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.sesion-cerrar:hover,
+.sesion-cerrar:focus-visible {
+  color: var(--text-primary, #384232);
+}
+
+.sesion-subtitulo {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent-color, #8A9872);
+}
+
+.sesion-ventana h2 {
+  margin-bottom: 0.5rem;
+  font-size: 1.8rem;
+  font-weight: 300;
+}
+
+.sesion-texto {
+  margin-bottom: 1.5rem;
+  color: var(--text-secondary, #5A6354);
+}
+
+.sesion-formulario label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sesion-formulario input {
+  width: 100%;
+  margin-bottom: 1.1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  background-color: #fff;
+  color: inherit;
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.sesion-formulario input:focus {
+  outline: 2px solid var(--accent-color, #8A9872);
+  outline-offset: 1px;
+}
+
+.sesion-boton {
+  width: 100%;
+  padding: 0.95rem 1rem;
+  border: none;
+  background-color: var(--text-primary, #384232);
+  color: var(--text-light, #F9F8F6);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.sesion-boton:hover {
+  background-color: var(--accent-color, #8A9872);
+}
+
+.sesion-boton:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.sesion-mensaje {
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+}
+
+.sesion-mensaje[hidden] {
+  display: none;
+}
+
+.sesion-mensaje.error {
+  background-color: #fbebeb;
+  color: #8a2c2c;
+}
+
+.sesion-mensaje.exito {
+  background-color: #e5f4e4;
+  color: #2f5d2c;
+}
+
+.sesion-registro {
+  margin-top: 1.25rem;
+  text-align: center;
+  color: var(--text-secondary, #5A6354);
+}
+
+.sesion-registro a {
+  color: var(--text-primary, #384232);
+  font-weight: 600;
+}
+
+/* El botón del menú en una sola línea ("Iniciar sesión" / "Cerrar sesión") */
+nav a.nav-login {
+  white-space: nowrap;
+}
+
+/* ---------- Secciones bloqueadas por rol (chat con IA, contacto) ---------- */
+
+.sesion-bloqueable {
+  position: relative;
+}
+
+.sesion-bloqueo {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem;
+  text-align: center;
+  background-color: rgba(249, 248, 246, 0.97);
+  color: var(--text-primary, #384232);
+  font-family: var(--font-family, 'Outfit', sans-serif);
+}
+
+.sesion-bloqueo[hidden] {
+  display: none;
+}
+
+.sesion-bloqueo-icono {
+  font-size: 1.8rem;
+}
+
+.sesion-bloqueo-texto {
+  max-width: 28rem;
+  font-size: 1.05rem;
+}
+
+.sesion-bloqueo-boton {
+  padding: 0.8rem 1.6rem;
+  border: none;
+  background-color: var(--text-primary, #384232);
+  color: var(--text-light, #F9F8F6);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.sesion-bloqueo-boton:hover {
+  background-color: var(--accent-color, #8A9872);
+}
+
+.sesion-bloqueo-boton[hidden] {
+  display: none;
+}
+
+/* La sección de contacto bloqueada necesita altura para que se lea el aviso */
+section.sesion-bloqueado[data-requiere-sesion] {
+  min-height: 320px;
+}
+
+/* ---------- Pestaña "Panel de admin" junto al logo ---------- */
+
+header .nav-admin {
+  margin-left: 1.5rem;
+  margin-right: auto; /* empuja el menú a la derecha */
+  padding: 0.45rem 1.1rem;
+  border: 1px solid var(--accent-color, #8A9872);
+  border-radius: 999px;
+  color: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+header .nav-admin:hover,
+header .nav-admin.active {
+  background-color: var(--accent-color, #8A9872);
+  color: var(--text-light, #F9F8F6);
+}
+
+@media (max-width: 768px) {
+  header .nav-admin {
+    margin-left: 0.75rem;
+    padding: 0.35rem 0.8rem;
+    font-size: 0.7rem;
+  }
+}
+
+/* En contacto el aviso va arriba para que se vea sin bajar */
+[data-requiere-sesion] > .sesion-bloqueo {
+  justify-content: flex-start;
+  padding-top: 5rem;
+}
+
+/* Con "Suscripción" e "Iniciar sesión" el menú ya no cabe en pantallas medianas:
+   se junta un poco más. Con la pestaña de admin, un poco más todavía. */
+@media (min-width: 769px) and (max-width: 1440px) {
+  nav ul {
+    gap: 1.6rem;
+  }
+  nav a {
+    font-size: 0.82rem;
+  }
+  header:has(.nav-admin) nav ul {
+    gap: 1.1rem;
+  }
+  header:has(.nav-admin) nav a {
+    font-size: 0.78rem;
+  }
+  header .nav-admin {
+    margin-left: 1rem;
+    padding: 0.4rem 0.9rem;
+    font-size: 0.72rem;
+  }
+}
+
+@media (min-width: 769px) {
+  header:has(.nav-admin) nav {
+    margin-left: 1rem;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1150px) {
+  nav ul,
+  header:has(.nav-admin) nav ul {
+    gap: 0.8rem;
+  }
+  nav a,
+  header:has(.nav-admin) nav a {
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+  }
+  nav a.nav-login {
+    padding: 0.35rem 0.7rem;
+  }
+  header .nav-admin {
+    margin-left: 0.6rem;
+    padding: 0.35rem 0.7rem;
+    font-size: 0.66rem;
+    letter-spacing: 0.04em;
+  }
+}

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de admin | Grupo 10.15</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="sesion.css">
+    <style>
+        .page-header {
+            height: 40vh;
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding-top: var(--header-height);
+        }
+        .admin-contenido {
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+        .admin-aviso {
+            padding: 2rem;
+            background-color: white;
+            text-align: center;
+        }
+        .admin-aviso .btn {
+            margin-top: 1rem;
+            font-family: var(--font-family);
+        }
+        .admin-mensaje {
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--accent-color);
+            background-color: white;
+        }
+        .admin-mensaje.exito { border-left-color: #4E7A3A; }
+        .admin-mensaje.error { border-left-color: #B5503C; }
+        .admin-resumen {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+        .admin-dato {
+            padding: 1.5rem;
+            background-color: white;
+        }
+        .admin-dato span {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+        .admin-dato strong {
+            font-size: 2rem;
+            font-weight: 300;
+        }
+        .admin-barra {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        .admin-barra input {
+            flex: 1;
+            min-width: 220px;
+            max-width: 360px;
+            padding: 0.75rem 1rem;
+            border: 1px solid rgba(0,0,0,0.15);
+            font-family: var(--font-family);
+            font-size: 1rem;
+        }
+        .admin-tabla-scroll {
+            overflow-x: auto;
+            background-color: white;
+        }
+        .admin-tabla {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+        .admin-tabla th, .admin-tabla td {
+            padding: 0.9rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+            vertical-align: middle;
+        }
+        .admin-tabla th {
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+        .admin-tabla select {
+            padding: 0.45rem 0.6rem;
+            border: 1px solid rgba(0,0,0,0.15);
+            background-color: var(--bg-color);
+            font-family: var(--font-family);
+            font-size: 0.9rem;
+        }
+        .admin-tabla select:disabled { opacity: 0.6; }
+        .admin-premium {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            background-color: #e5f4e4;
+            color: #2f5d2c;
+        }
+        .admin-premium.no {
+            background-color: #f0efec;
+            color: var(--text-secondary);
+        }
+        .admin-yo {
+            font-size: 0.75rem;
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo"><img src="assets/images/logo.png" alt="Grupo 10.15" style="height: 150px; width: auto;"></a>
+        <nav>
+            <ul>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="conocenos.html">Conócenos</a></li>
+                <li><a href="servicios.html">Servicios</a></li>
+                <li><a href="inmobiliaria.html">Inmobiliaria</a></li>
+                <li><a href="portafolio.html">Portafolio</a></li>
+                <li><a href="contacto.html">Contacto</a></li>
+                <li><a href="suscripcion.html">Suscripción</a></li>
+                <li><a href="login.html" class="nav-login">Iniciar sesión</a></li>
+            </ul>
+        </nav>
+        <div class="hamburger">
+            <div class="line1"></div>
+            <div class="line2"></div>
+            <div class="line3"></div>
+        </div>
+    </header>
+
+    <main>
+        <section class="page-header">
+            <div class="fade-up">
+                <span class="hero-subtitle" style="color:var(--accent-color); letter-spacing:0.2em;">Administración</span>
+                <h1 style="font-weight: 300;">Panel de admin</h1>
+            </div>
+        </section>
+
+        <section>
+            <div class="admin-contenido">
+                <!-- Mientras se revisa la sesión, o si no es ADMIN -->
+                <div id="admin-aviso" class="admin-aviso">
+                    <p id="admin-aviso-texto">Revisando tu sesión…</p>
+                    <button id="admin-aviso-boton" type="button" class="btn btn-primary" hidden>Iniciar sesión</button>
+                </div>
+
+                <!-- Solo para ADMIN: lo mismo que la colección de Postman de autenticación -->
+                <div id="admin-panel" hidden>
+                    <p id="admin-mensaje" class="admin-mensaje" role="status" aria-live="polite" hidden></p>
+
+                    <div class="admin-resumen">
+                        <div class="admin-dato"><span>Cuentas</span><strong id="dato-total">0</strong></div>
+                        <div class="admin-dato"><span>Administradores</span><strong id="dato-admins">0</strong></div>
+                        <div class="admin-dato"><span>Con Premium</span><strong id="dato-premium">0</strong></div>
+                    </div>
+
+                    <div class="admin-barra">
+                        <input id="admin-buscar" type="search" placeholder="Buscar por correo o nombre" aria-label="Buscar cuenta">
+                        <button id="admin-recargar" type="button" class="btn">Actualizar</button>
+                    </div>
+
+                    <div class="admin-tabla-scroll">
+                        <table class="admin-tabla">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Correo</th>
+                                    <th>Nombre</th>
+                                    <th>Rol</th>
+                                    <th>Plan</th>
+                                    <th>Acceso Premium</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-cuentas">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-col">
+                <a href="index.html" class="logo" style="margin-bottom:1rem; display:block;"><img src="assets/images/logo_vertical.png" alt="Grupo 10.15" style="height: 150px; width: auto;"></a>
+                <p>Arquitectura y Diseño en Guadalajara.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Navegación</h4>
+                <ul>
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="conocenos.html">Conócenos</a></li>
+                    <li><a href="servicios.html">Servicios</a></li>
+                    <li><a href="portafolio.html">Portafolio</a></li>
+                    <li><a href="contacto.html">Contacto</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Contacto</h4>
+                <ul>
+                    <li><a href="tel:+523325239705">+52 33 2523 9705</a></li>
+                    <li>Guadalajara, Jalisco</li>
+                </ul>
+                <h4 style="margin-top:1.5rem;">Síguenos</h4>
+                <ul>
+                    <li><a href="https://www.instagram.com/grupo_10.15" target="_blank" rel="noopener">Instagram: @grupo_10.15</a></li>
+                    <li><a href="https://www.tiktok.com/@grupo10.15" target="_blank" rel="noopener">TikTok: @grupo10.15</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>Copyright © 2026. Grupo 10.15.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="admin.js"></script>
+
+    <!-- Ventana flotante de inicio de sesión (microservicio autenticacion) -->
+    <script src="sesion.js"></script>
+</body>
+</html>
