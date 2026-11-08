@@ -1,0 +1,70 @@
+/* ===== ESTILOS GENERALES ===== */
+body {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+header {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: #1a1a1a;
+    color: #ffffff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.5rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* ===== CATÁLOGO DE PROYECTOS ===== */
+.projects-catalog {
+    display: flex;
+    gap: 30px;
+    padding: 50px 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    max-width: 1200px;
+    margin: 0 auto; /* Centra el catálogo en la pantalla */
+}
+
+/* ===== TARJETAS DE PROPIEDADES ===== */
+.project-card {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 25px;
+    width: 320px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Efecto al pasar el mouse por encima de la tarjeta */
+.project-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.project-card h2 {
+    color: #bfa15f; /* Un tono dorado elegante */
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.6rem;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 10px;
+}
+
+.project-card p {
+    margin: 12px 0;
+    font-size: 1.05rem;
+    color: #555;
+}
+
+.project-card strong {
+    color: #222;
+}
