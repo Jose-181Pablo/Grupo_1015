@@ -3,6 +3,7 @@ package mx.grupo1015.chatia;
 import com.jayway.jsonpath.JsonPath;
 import mx.grupo1015.chatia.dto.PropiedadCatalogo;
 import mx.grupo1015.chatia.client.CatalogoClient;
+import mx.grupo1015.chatia.client.OfertasClient;
 import mx.grupo1015.chatia.service.GeminiService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import mx.grupo1015.chatia.dto.OfertaVigente;
+
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -41,6 +46,9 @@ class ChatControllerTests {
     @MockitoBean
     private CatalogoClient catalogoClient;
 
+    @MockitoBean
+    private OfertasClient ofertasClient;
+
     @Test
     void creaConversacionEnviaMensajeYLaElimina() throws Exception {
         PropiedadCatalogo lagoNogal = new PropiedadCatalogo(
@@ -50,9 +58,17 @@ class ChatControllerTests {
                 null, "16 x 28 m", "Habitacional", null, "DISPONIBLE"
         );
 
+        OfertaVigente remate = new OfertaVigente(
+                "Remate Lago Nogal", null, "REMATE",
+                new BigDecimal("5490000"), new BigDecimal("4900000"),
+                LocalDate.now().plusDays(10), true
+        );
+
+        when(ofertasClient.buscarVigentes("lago_nogal"))
+                .thenReturn(List.of(remate));
         when(catalogoClient.buscarPorClave("lago_nogal"))
                 .thenReturn(Optional.of(lagoNogal));
-        when(geminiService.generarRespuesta(any(), any(), anyList()))
+        when(geminiService.generarRespuesta(any(), any(), anyList(), anyList()))
                 .thenReturn("Respuesta de prueba");
 
         String creada = mockMvc.perform(post("/api/v1/conversaciones")
@@ -82,8 +98,8 @@ class ChatControllerTests {
                 .andExpect(jsonPath("$.respuestaAsistente.contenido")
                         .value("Respuesta de prueba"));
 
-        // Los datos del catálogo deben llegar a Gemini
-        verify(geminiService).generarRespuesta(any(), eq(Optional.of(lagoNogal)), anyList());
+        // Los datos del catálogo y el remate vigente deben llegar a Gemini
+        verify(geminiService).generarRespuesta(any(), eq(Optional.of(lagoNogal)), eq(List.of(remate)), anyList());
 
         mockMvc.perform(get("/api/v1/conversaciones/{id}", id))
                 .andExpect(status().isOk())

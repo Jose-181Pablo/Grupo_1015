@@ -2,6 +2,7 @@ package mx.grupo1015.chatia.service;
 
 import com.google.genai.Client;
 import com.google.genai.types.GenerateContentResponse;
+import mx.grupo1015.chatia.dto.OfertaVigente;
 import mx.grupo1015.chatia.dto.PropiedadCatalogo;
 import mx.grupo1015.chatia.exception.IaServiceException;
 import mx.grupo1015.chatia.model.Conversacion;
@@ -30,9 +31,10 @@ public class GeminiService {
     public String generarRespuesta(
             Conversacion conversacion,
             Optional<PropiedadCatalogo> propiedad,
+            List<OfertaVigente> ofertas,
             List<Mensaje> historial
     ) {
-        String prompt = construirPrompt(conversacion, propiedad, historial);
+        String prompt = construirPrompt(conversacion, propiedad, ofertas, historial);
 
         try {
             GenerateContentResponse respuesta =
@@ -67,6 +69,7 @@ public class GeminiService {
     private String construirPrompt(
             Conversacion conversacion,
             Optional<PropiedadCatalogo> propiedad,
+            List<OfertaVigente> ofertas,
             List<Mensaje> historial
     ) {
         StringBuilder prompt = new StringBuilder();
@@ -79,13 +82,25 @@ public class GeminiService {
 
                 Reglas:
                 - Responde siempre en español.
-                - No inventes precios, ubicaciones, características,
-                  porcentajes de plusvalía ni datos técnicos.
-                - Utiliza solamente la información proporcionada.
+                - No inventes precios, ubicaciones, características
+                  ni datos técnicos.
+                - Si preguntan por plusvalía o si el valor puede aumentar,
+                  da una estimación orientativa: menciona el precio actual,
+                  qué características y qué tipo de zona la favorecen
+                  (ubicación, amenidades, servicios, crecimiento de la zona)
+                  y un rango aproximado de plusvalía anual (por ejemplo
+                  "entre 5% y 8% anual") según el mercado inmobiliario
+                  de la Zona Metropolitana de Guadalajara. Aclara siempre
+                  que es una estimación aproximada y no una garantía.
+                - Fuera de esa estimación, utiliza solamente la información proporcionada.
                 - Si falta información, indícalo y recomienda consultar
                   a un asesor inmobiliario.
                 - No afirmes que una inversión garantiza rendimientos.
                 - No solicites datos personales sensibles.
+                - Si la propiedad tiene una oferta o un remate vigente,
+                  el precio actual es el precio de la oferta o remate,
+                  no el del catálogo. Menciona el precio original,
+                  el precio con descuento y hasta cuándo es válido.
                 - Mantén la respuesta en un máximo de cuatro párrafos.
 
                 """);
@@ -106,6 +121,8 @@ public class GeminiService {
 
                         """)
         );
+
+        agregarOfertas(prompt, ofertas);
 
         prompt.append("Historial de la conversación:\n");
 
@@ -145,6 +162,33 @@ public class GeminiService {
         agregarDato(prompt, "Uso de suelo", datos.usoSuelo());
         agregarDato(prompt, "Amenidades", datos.amenidades());
         agregarDato(prompt, "Estatus", datos.estatus());
+
+        prompt.append("\n");
+    }
+
+    private void agregarOfertas(
+            StringBuilder prompt,
+            List<OfertaVigente> ofertas
+    ) {
+        if (ofertas == null || ofertas.isEmpty()) {
+            prompt.append("La propiedad no tiene ofertas ni remates vigentes.\n\n");
+            return;
+        }
+
+        prompt.append("Ofertas y remates vigentes (su precio sustituye al del catálogo):\n");
+
+        for (OfertaVigente oferta : ofertas) {
+            prompt.append("- ")
+                    .append("REMATE".equalsIgnoreCase(oferta.tipo()) ? "Remate" : "Oferta")
+                    .append(": ")
+                    .append(oferta.titulo())
+                    .append("\n");
+
+            agregarDato(prompt, "  Precio original (MXN)", formatear(oferta.precioOriginal()));
+            agregarDato(prompt, "  Precio actual con descuento (MXN)", formatear(oferta.precioFinal()));
+            agregarDato(prompt, "  Válido hasta", oferta.fechaFin() == null ? null : oferta.fechaFin().toString());
+            agregarDato(prompt, "  Detalle", oferta.descripcion());
+        }
 
         prompt.append("\n");
     }

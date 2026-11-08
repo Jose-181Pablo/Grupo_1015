@@ -1,11 +1,13 @@
 package mx.grupo1015.chatia.service;
 
 import mx.grupo1015.chatia.client.CatalogoClient;
+import mx.grupo1015.chatia.client.OfertasClient;
 import mx.grupo1015.chatia.dto.ChatResponse;
 import mx.grupo1015.chatia.dto.ConversacionResponse;
 import mx.grupo1015.chatia.dto.CrearConversacionRequest;
 import mx.grupo1015.chatia.dto.EnviarMensajeRequest;
 import mx.grupo1015.chatia.dto.MensajeResponse;
+import mx.grupo1015.chatia.dto.OfertaVigente;
 import mx.grupo1015.chatia.dto.PropiedadCatalogo;
 import mx.grupo1015.chatia.exception.RecursoNoEncontradoException;
 import mx.grupo1015.chatia.model.Conversacion;
@@ -26,17 +28,20 @@ public class ChatService {
     private final MensajeRepository mensajeRepository;
     private final GeminiService geminiService;
     private final CatalogoClient catalogoClient;
+    private final OfertasClient ofertasClient;
 
     public ChatService(
             ConversacionRepository conversacionRepository,
             MensajeRepository mensajeRepository,
             GeminiService geminiService,
-            CatalogoClient catalogoClient
+            CatalogoClient catalogoClient,
+            OfertasClient ofertasClient
     ) {
         this.conversacionRepository = conversacionRepository;
         this.mensajeRepository = mensajeRepository;
         this.geminiService = geminiService;
         this.catalogoClient = catalogoClient;
+        this.ofertasClient = ofertasClient;
     }
 
     @Transactional
@@ -97,10 +102,17 @@ public class ChatService {
                         conversacion.getPropiedadId()
                 );
 
+        // Ofertas y remates vigentes (microservicio de Génesis): su precio manda sobre el del catálogo
+        List<OfertaVigente> ofertas =
+                ofertasClient.buscarVigentes(
+                        conversacion.getPropiedadId()
+                );
+
         String contenidoRespuesta =
                 geminiService.generarRespuesta(
                         conversacion,
                         propiedad,
+                        ofertas,
                         historial
                 );
 

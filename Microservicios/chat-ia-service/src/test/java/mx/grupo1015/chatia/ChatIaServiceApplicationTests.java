@@ -1,6 +1,7 @@
 package mx.grupo1015.chatia;
 
 import mx.grupo1015.chatia.client.CatalogoClient;
+import mx.grupo1015.chatia.client.OfertasClient;
 import mx.grupo1015.chatia.service.GeminiService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,6 +17,9 @@ class ChatIaServiceApplicationTests {
 
     @MockitoBean
     private CatalogoClient catalogoClient;
+
+    @MockitoBean
+    private OfertasClient ofertasClient;
 
     @Test
     void contextLoads() {

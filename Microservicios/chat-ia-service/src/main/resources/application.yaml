@@ -31,6 +31,10 @@ catalogo:
   inmuebles-url: ${INMUEBLES_URL:http://localhost:8083}
   terrenos-url: ${TERRENOS_URL:http://localhost:8084}
 
+# Microservicio de ofertas y remates de la rama gene1 (se busca primero en Eureka).
+ofertas:
+  url: ${OFERTAS_URL:http://localhost:8087}
+
 # Registro en Eureka. Desde IntelliJ usa localhost; en Docker se manda EUREKA_URL.
 eureka:
   client:

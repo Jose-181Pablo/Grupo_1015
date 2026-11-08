@@ -40,8 +40,9 @@ services:
       GEMINI_MODEL: ${GEMINI_MODEL:-gemini-flash-latest}
       INMUEBLES_URL: ${INMUEBLES_URL:-http://host.docker.internal:8083}
       TERRENOS_URL: ${TERRENOS_URL:-http://host.docker.internal:8084}
+      OFERTAS_URL: ${OFERTAS_URL:-http://host.docker.internal:8087}
 
-    # Permite llegar a los catálogos que corren en tu equipo (o en otro compose)
+    # Permite llegar a los catálogos y a ofertas que corren en tu equipo (o en otro compose)
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
