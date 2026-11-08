@@ -264,6 +264,10 @@
 
     function cerrarSesion() {
         borrarToken();
+        // El historial del asistente virtual se borra junto con la sesión.
+        try {
+            sessionStorage.removeItem("grupo1015_chat_conversaciones");
+        } catch (e) { /* sin almacenamiento disponible */ }
         window.location.reload();
     }
 

@@ -37,10 +37,15 @@
         return usuarioId;
     }
 
+    /*
+     * Las conversaciones se guardan en sessionStorage: siguen vivas al
+     * cambiar de página, pero se borran al cerrar la pestaña o el
+     * navegador. sesion.js también las borra al cerrar sesión.
+     */
     function obtenerConversacionesGuardadas() {
         try {
             return JSON.parse(
-                localStorage.getItem(STORAGE_CONVERSACIONES) || "{}"
+                sessionStorage.getItem(STORAGE_CONVERSACIONES) || "{}"
             );
         } catch {
             return {};
@@ -48,7 +53,7 @@
     }
 
     function guardarConversaciones(conversaciones) {
-        localStorage.setItem(
+        sessionStorage.setItem(
             STORAGE_CONVERSACIONES,
             JSON.stringify(conversaciones)
         );
@@ -163,6 +168,50 @@
         return mensaje;
     }
 
+    /*
+     * Vuelve a pintar los mensajes guardados en el microservicio para que
+     * el chat no se vea vacío al regresar a la página.
+     */
+    async function restaurarHistorial(projectId, conversacionId) {
+        const chat = document.getElementById(`ai-chat-${projectId}`);
+
+        if (!chat) {
+            return;
+        }
+
+        try {
+            const conversacion = await realizarPeticion(
+                `${API_BASE_URL}/conversaciones/${conversacionId}`,
+                { method: "GET" }
+            );
+
+            (conversacion?.mensajes || []).forEach(mensaje => {
+                if (mensaje.remitente === "USUARIO") {
+                    agregarMensaje(chat, mensaje.contenido, "msg-user");
+                } else if (mensaje.remitente === "ASISTENTE") {
+                    agregarMensaje(chat, mensaje.contenido, "msg-ai");
+                }
+            });
+        } catch (error) {
+            if (error.status === 404) {
+                olvidarConversacion(projectId);
+            } else {
+                console.warn(
+                    `No se pudo recuperar el historial de ${projectId}:`,
+                    error
+                );
+            }
+        }
+    }
+
+    function restaurarConversaciones() {
+        const conversaciones = obtenerConversacionesGuardadas();
+
+        Object.entries(conversaciones).forEach(([projectId, id]) => {
+            restaurarHistorial(projectId, id);
+        });
+    }
+
     window.useSuggestion = function (projectId, texto) {
         const input = document.getElementById(`input-${projectId}`);
 
@@ -242,6 +291,10 @@
     };
 
     document.addEventListener("DOMContentLoaded", () => {
+        // Versiones anteriores guardaban las conversaciones para siempre.
+        localStorage.removeItem(STORAGE_CONVERSACIONES);
+        restaurarConversaciones();
+
         document.querySelectorAll(".ai-input").forEach(input => {
             input.addEventListener("keydown", event => {
                 if (event.key !== "Enter") {
